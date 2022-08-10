@@ -37,7 +37,7 @@ export class Marker {
             if(this.image == "gfx/terobjs/mm/custom") {
                 icon = new ImageIcon({iconUrl: 'gfx/terobjs/mm/custom.png', iconSize: [21, 23], iconAnchor: [11, 21], popupAnchor: [1, 3], tooltipAnchor: [1, 3]})
             } else {
-                icon = new ImageIcon({iconUrl: `${this.image}.png`, iconSize: [32, 32]});
+                icon = new ImageIcon({iconUrl: `${this.image}.png`, iconSize: [16, 16]});
             }
             
             let position = mapview.map.unproject([this.position.x, this.position.y], HnHMaxZoom);
