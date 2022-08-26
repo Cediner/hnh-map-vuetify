@@ -1,5 +1,11 @@
 # hnh-map
 
+> docker build -t "your_tag" https://github.com/Cediner/hnh-map-vuetify.git
+
+> docker run -v /srv/hnh-map:/map -p 80:8080 "your_tag"
+
+Source information
+
 Automapper server for HnH, (mostly) compatible with https://github.com/APXEOLOG/hnh-auto-mapper-server
 
 Docker image can be built from sources, or is available at https://hub.docker.com/r/andyleap/hnh-auto-mapper 
