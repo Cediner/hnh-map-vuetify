@@ -51,6 +51,10 @@ var (
 	}(), "Port to listen on")
 )
 
+func faviconHandler(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "frontend/public/favicon.ico")
+}
+
 func main() {
 	flag.Parse()
 
@@ -90,7 +94,7 @@ func main() {
 
 	go m.cleanChars()
 
-	http.Handle("/favicon.ico", http.FileServer(http.Dir("frontend/public")))
+	http.HandleFunc("/favicon.ico", faviconHandler)
 	// Mapping client endpoints
 	http.HandleFunc("/client/", m.client)
 
