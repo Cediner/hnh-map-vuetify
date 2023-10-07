@@ -19,7 +19,7 @@ jobs:
     - name: Running
       uses: addnab/docker-run-action@v3
       with:
-        image: Cediner/hnh-map-vuetify:latest
+        image: cediner/hnh-map-vuetify:latest
         options: -v ${{ github.workspace }}:/var/www
         run: /
           composer install
