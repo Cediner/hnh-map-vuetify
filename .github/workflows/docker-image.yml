@@ -13,11 +13,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag hnh-map
-
     - name: Running the Docker image
       uses: wshihadeh/docker-deployment-action@v2
       with:
