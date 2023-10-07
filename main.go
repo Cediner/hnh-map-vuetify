@@ -90,6 +90,7 @@ func main() {
 
 	go m.cleanChars()
 
+	http.Handle("/favicon.ico", http.FileServer(http.Dir("frontend/public")))
 	// Mapping client endpoints
 	http.HandleFunc("/client/", m.client)
 
@@ -126,7 +127,6 @@ func main() {
 	//http.Handle("/map/grids/", http.StripPrefix("/map/grids", http.FileServer(http.Dir(m.gridStorage))))
 
 	http.Handle("/map/", http.StripPrefix("/map", http.FileServer(http.Dir("frontend"))))
-	http.Handle("/favicon.ico", http.FileServer(http.Dir("frontend/public")))
 
 	http.Handle("/js/", http.FileServer(http.Dir("public")))
 
