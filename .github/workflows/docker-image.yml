@@ -12,9 +12,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
     
     - name: Building
-      run: docker build . -t hnh-map
+      uses: actions/checkout@v3
+      
     - name: Running
-      run: docker run -d --restart=always -v /srv/hnh-map:/map -p 80:8080 --name map hnh-map
+      uses: wshihadeh/docker-deployment-action@v2
+      with:
+        remote_docker_host: root@gihub.com
