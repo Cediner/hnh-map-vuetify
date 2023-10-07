@@ -13,11 +13,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: wshihadeh/docker-deployment-action@v2
     - uses: actions/checkout@v3
     
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag hnh-map
 
     - name: Running the Docker image
-      run: docker run -d --restart=always -v /srv/hnh-map:/map -p 80:8080 --name map hnh-map
+      uses: wshihadeh/docker-deployment-action@v2
+      with:
+        remote_docker_host: user@myswarm.com
