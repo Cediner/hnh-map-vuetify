@@ -52,7 +52,7 @@ var (
 )
 
 func faviconHandler(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "./frontend/public/favicon.ico")
+	http.ServeFile(w, r, "public/favicon.ico")
 }
 
 func main() {
