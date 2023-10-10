@@ -94,7 +94,7 @@ func main() {
 
 	go m.cleanChars()
 
-	http.HandleFunc("/favicon.ico", faviconHandler)
+	//http.HandleFunc("/favicon.ico", faviconHandler)
 	// Mapping client endpoints
 	http.HandleFunc("/client/", m.client)
 
