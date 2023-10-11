@@ -7,8 +7,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
-    - name: Build
-      uses: docker/build-push-action@v3
-      with:
-        push: false
+      run: docker build -t map https://github.com/Cediner/hnh-map-vuetify.git
+    - name: Run
+      run: docker run -v /srv/hnh-map:/map -p 80:8080 map
