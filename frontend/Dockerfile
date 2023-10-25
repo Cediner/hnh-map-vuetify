@@ -1,4 +1,4 @@
-FROM alpine:3.11.0
+FROM alpine:3.11.0 AS frontendbuilder
 
 RUN mkdir /frontend
 WORKDIR /frontend
