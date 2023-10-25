@@ -2,7 +2,7 @@ import L, {Bounds, LatLng, Point} from "leaflet"
 import {getTileUrl} from "../main";
 
 export const TileSize = 100;
-export const HnHMaxZoom = 6;
+export const HnHMaxZoom = 10;
 export const HnHMinZoom = 1;
 
 export const GridCoordLayer = L.GridLayer.extend({

@@ -26,7 +26,7 @@ export class Character {
     }
 
     add(mapview) {
-        if(this.map == mapview.mapid) {
+        if(this.map === mapview.mapid) {
             let position = mapview.map.unproject([this.position.x, this.position.y], HnHMaxZoom);
             this.marker = L.marker(position, {title: this.name});
             this.marker.on("click", this.callCallback.bind(this));
@@ -35,12 +35,12 @@ export class Character {
     }
 
     update(mapview, updated) {
-        if(this.map != updated.map) {
+        if(this.map !== updated.map) {
             this.remove(mapview);
         }
         this.map = updated.map;
         this.position = updated.position;
-        if (!this.marker && this.map == mapview.mapid) {
+        if (!this.marker && this.map === mapview.mapid) {
             this.add(mapview);
         }
         if(this.marker) {

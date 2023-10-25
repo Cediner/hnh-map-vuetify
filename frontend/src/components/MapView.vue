@@ -228,7 +228,7 @@
                 if(value) {
                     this.markers.getElements().forEach(it => it.remove(this));
                 } else {
-                    this.markers.getElements().filter(it => it.map == this.mapid || it.map == this.overlayLayer.map).forEach(it => it.add(this));
+                    this.markers.getElements().filter(it => it.map === this.mapid || it.map === this.overlayLayer.map).forEach(it => it.add(this));
                 }
                 this.markersHidden = value;
             },
@@ -266,14 +266,14 @@
                     this.overlayLayer.redraw();
                     if(!this.markersHidden) {
                         this.markers.getElements().forEach(it => it.remove(this));
-                        this.markers.getElements().filter(it => it.map == this.mapid || it.map == this.overlayLayer.map).forEach(it => it.add(this));
+                        this.markers.getElements().filter(it => it.map === this.mapid || it.map === this.overlayLayer.map).forEach(it => it.add(this));
                     }
                 } else {
                     this.overlayLayer.map = -1;
                     this.overlayLayer.redraw();
                     if(!this.markersHidden) {
                         this.markers.getElements().forEach(it => it.remove(this));
-                        this.markers.getElements().filter(it => it.map == this.mapid).forEach(it => it.add(this));
+                        this.markers.getElements().filter(it => it.map === this.mapid).forEach(it => it.add(this));
                     }
                 }
             },
@@ -391,7 +391,7 @@
                     for(var update of updates) {
                         var key = update['M'] + ':' + update['X'] + ':' + update['Y'] + ':' + update['Z'];
                         this.layer.cache[key] = update['T'];
-                        if(this.layer.map == update['M']) {
+                        if(this.layer.map === update['M']) {
                             this.layer.refresh(update['X'], update['Y'], update['Z']);
                         }
                     }
@@ -399,7 +399,7 @@
 
                 this.source.addEventListener('merge', ((e)=> {
                     var merge = JSON.parse(e.data);
-                    if(this.mapid == merge['From']) {
+                    if(this.mapid === merge['From']) {
                         let mapTo = merge['To'];
                         let point = this.map.project(this.map.getCenter(), 6);
                         let coordinate = {x: Math.floor(point.x / TileSize), y: Math.floor(point.y / TileSize), z: this.map.getZoom()};
@@ -431,7 +431,7 @@
                 } else if (this.$route.params.gridX && this.$route.params.gridY && this.$route.params.zoom) { // Navigate to specific grid
                     let latLng = this.toLatLng(this.$route.params.gridX * 100, this.$route.params.gridY * 100);
 
-                    if(this.mapid != this.$route.params.map) {
+                    if(this.mapid !== this.$route.params.map) {
                         this.changeMap(this.$route.params.map);
                     }
 
@@ -461,7 +461,7 @@
             updateMarkers(markersData) {
                 this.markers.update(markersData.map(it => new Marker(it)),
                     (marker) => { // Add
-                        if(marker.map == this.mapid || marker.map == this.overlayLayer.map) {
+                        if(marker.map === this.mapid || marker.map === this.overlayLayer.map) {
                             marker.add(this);
                         }
                         marker.setClickCallback(() => {
@@ -497,8 +497,8 @@
                         character.remove(this);
                     },
                     (character, updated) => { // Update
-                        if (this.trackingCharacterId == updated.id) {
-                            if(this.mapid != updated.map) {
+                        if (this.trackingCharacterId === updated.id) {
+                            if(this.mapid !== updated.map) {
                                 this.changeMap(updated.map);
                             }
                             let latlng = this.map.unproject([updated.position.x, updated.position.y], HnHMaxZoom);
@@ -542,7 +542,7 @@
                 }});
             },
             changeMap(mapid) {
-                if(mapid != this.mapid) {
+                if(mapid !== this.mapid) {
                     this.mapid = mapid;
                     this.layer.map = this.mapid;
                     this.layer.redraw();
@@ -550,7 +550,7 @@
                     this.overlayLayer.redraw();
                     if(!this.markersHidden) {
                         this.markers.getElements().forEach(it => it.remove(this));
-                        this.markers.getElements().filter(it => it.map == this.mapid).forEach(it => it.add(this));
+                        this.markers.getElements().filter(it => it.map === this.mapid).forEach(it => it.add(this));
                     }
                     this.characters.getElements().forEach(it => {
                         it.remove(this);

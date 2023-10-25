@@ -19,7 +19,7 @@ func (m *Map) getChars(rw http.ResponseWriter, req *http.Request) {
 		rw.WriteHeader(http.StatusUnauthorized)
 		return
 	}
-	if !s.Auths.Has(AUTH_MARKERS) {
+	if !s.Auths.Has(AUTH_POINTER) {
 		json.NewEncoder(rw).Encode([]interface{}{})
 		return
 	}

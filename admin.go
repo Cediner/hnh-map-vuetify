@@ -334,7 +334,7 @@ var errFound = errors.New("found tile")
 
 func (m *Map) wipeTile(rw http.ResponseWriter, req *http.Request) {
 	s := m.getSession(req)
-	if s == nil || !s.Auths.Has(AUTH_ADMIN) {
+	if s == nil || !s.Auths.Has(AUTH_ADMIN) || !s.Auths.Has(AUTH_WRITER) {
 		http.Redirect(rw, req, "/", 302)
 		return
 	}
@@ -395,7 +395,7 @@ func (m *Map) wipeTile(rw http.ResponseWriter, req *http.Request) {
 
 func (m *Map) setCoords(rw http.ResponseWriter, req *http.Request) {
 	s := m.getSession(req)
-	if s == nil || !s.Auths.Has(AUTH_ADMIN) {
+	if s == nil || !s.Auths.Has(AUTH_ADMIN) || !s.Auths.Has(AUTH_WRITER) {
 		http.Redirect(rw, req, "/", 302)
 		return
 	}
@@ -682,7 +682,7 @@ func (m *Map) export(rw http.ResponseWriter, req *http.Request) {
 
 func (m *Map) hideMarker(rw http.ResponseWriter, req *http.Request) {
 	s := m.getSession(req)
-	if s == nil || !s.Auths.Has(AUTH_ADMIN) {
+	if s == nil || !s.Auths.Has(AUTH_ADMIN) || !s.Auths.Has(AUTH_WRITER) {
 		http.Redirect(rw, req, "/", 302)
 		return
 	}

@@ -44,7 +44,7 @@ new Server({
             }
         );
         this.get("config/", () => {
-                return {"title": "map", "auths": ["map", "markers", "upload", "admin"]}
+                return {"title": "map", "auths": ["map", "markers", "point", "upload", "writer", "admin"]}
             }
         );
     }

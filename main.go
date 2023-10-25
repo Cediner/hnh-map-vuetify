@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/andyleap/hnh-map/webapp"
+	"hnh-map/webapp"
 
 	"go.etcd.io/bbolt"
 	"golang.org/x/crypto/bcrypt"
@@ -94,7 +94,7 @@ func main() {
 
 	go m.cleanChars()
 
-	//http.HandleFunc("/favicon.ico", faviconHandler)
+	http.HandleFunc("/favicon.ico", faviconHandler)
 	// Mapping client endpoints
 	http.HandleFunc("/client/", m.client)
 
@@ -219,6 +219,8 @@ func (a Auths) Has(auth string) bool {
 
 const (
 	AUTH_ADMIN   = "admin"
+	AUTH_WRITER  = "writer"
+	AUTH_POINTER = "point"
 	AUTH_MAP     = "map"
 	AUTH_MARKERS = "markers"
 	AUTH_UPLOAD  = "upload"
