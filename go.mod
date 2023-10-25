@@ -1,4 +1,4 @@
-module hnh-map
+module github.com/cediner/hnh-map
 
 go 1.13
 

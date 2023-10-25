@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	"hnh-map/webapp"
+	"github.com/cediner/hnh-map/webapp"
 
 	"go.etcd.io/bbolt"
 	"golang.org/x/crypto/bcrypt"
