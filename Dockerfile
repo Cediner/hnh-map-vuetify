@@ -9,7 +9,7 @@ RUN go mod download
 COPY . .
 RUN go build
 
-FROM alpine AS frontendbuilder
+FROM alpine:3.11.0
 
 RUN mkdir /frontend
 WORKDIR /frontend
