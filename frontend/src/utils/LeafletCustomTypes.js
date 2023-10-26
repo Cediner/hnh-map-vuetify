@@ -32,8 +32,8 @@ export const GridCoordLayer = L.GridLayer.extend({
 
 export const ImageIcon = L.Icon.extend({
     options: {
-        iconSize: [16, 16],
-        iconAnchor: [8, 8],
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
     }
 });
 
