@@ -3,7 +3,7 @@ import {getTileUrl} from "../main";
 
 export const TileSize = 100;
 export const HnHMaxZoom = 6;
-export const HnHMinZoom = 0;
+export const HnHMinZoom = 1;
 
 export const GridCoordLayer = L.GridLayer.extend({
     createTile: function (coords) {
