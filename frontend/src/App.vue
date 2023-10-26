@@ -1,9 +1,6 @@
 <template>
   <v-app style="background-color: black">
-
-        <router-view v-on:error="login" style="z-index: 0"/>
-
-
+    <router-view v-on:error="login" style="z-index: 0"/>
   </v-app>
 </template>
 

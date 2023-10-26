@@ -31,15 +31,21 @@ export class Marker {
     }
 
     add(mapview) {
-        if(!this.hidden) {
+        if (!this.hidden) {
             let icon;
-            
-            if(this.image == "gfx/terobjs/mm/custom") {
-                icon = new ImageIcon({iconUrl: 'gfx/terobjs/mm/custom.png', iconSize: [21, 23], iconAnchor: [11, 21], popupAnchor: [1, 3], tooltipAnchor: [1, 3]})
+
+            if (this.image == "gfx/terobjs/mm/custom") {
+                icon = new ImageIcon({
+                    iconUrl: 'gfx/terobjs/mm/custom.png',
+                    iconSize: [21, 23],
+                    iconAnchor: [11, 21],
+                    popupAnchor: [1, 3],
+                    tooltipAnchor: [1, 3]
+                })
             } else {
                 icon = new ImageIcon({iconUrl: `${this.image}.png`, iconSize: [24, 24]});
             }
-            
+
             let position = mapview.map.unproject([this.position.x, this.position.y], HnHMaxZoom);
             this.marker = L.marker(position, {icon: icon, title: this.name});
             this.marker.addTo(mapview.markerLayer);
@@ -64,16 +70,17 @@ export class Marker {
     }
 
     callClickCallback(e) {
-        if(this.onClick != null) {
+        if (this.onClick != null) {
             this.onClick(e);
         }
     }
+
     setContextMenu(callback) {
         this.onContext = callback;
     }
 
     callContextCallback(e) {
-        if(this.onContext != null) {
+        if (this.onContext != null) {
             this.onContext(e);
         }
     }

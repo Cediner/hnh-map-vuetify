@@ -1,9 +1,9 @@
 module.exports = {
-  publicPath: '/map',
+    publicPath: '/map',
 
-  transpileDependencies: [
-    'vuetify'
-  ],
-  lintOnSave: false
+    transpileDependencies: [
+        'vuetify'
+    ],
+    lintOnSave: false
 
 }
