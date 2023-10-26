@@ -405,7 +405,7 @@ export default {
       })*/
 
       this.map.on('contextmenu', ((mev) => {
-        if (this.auths.includes('admin')) {
+        if (this.auths.includes('admin') || this.auths.includes('writer')) {
           let point = this.map.project(mev.latlng, 6);
           let coords = {x: Math.floor(point.x / TileSize), y: Math.floor(point.y / TileSize)};
           this.$refs.menu.open(mev.originalEvent, {coords: coords});
