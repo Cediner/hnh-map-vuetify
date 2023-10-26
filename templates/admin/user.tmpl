@@ -41,9 +41,21 @@
                         </li>
                         <li class="collection-item">
                             <label>
+                                <input type="checkbox" name="auths" value="point"{{if .User.Auths.Has "point"}} checked="checked"{{end}}/>
+                                <span>Characters</span>
+                            </label>
+                        </li>
+                        <li class="collection-item">
+                            <label>
                                 <input type="checkbox" name="auths" value="upload"{{if .User.Auths.Has "upload"}} checked="checked"{{end}}/>
                                 <span>Upload</span>
                             </label>
+                        </li>
+                        <li class="collection-item">
+                           <label>
+                               <input type="checkbox" name="auths" value="writer"{{if .User.Auths.Has "writer"}} checked="checked"{{end}}/>
+                               <span>Redactor</span>
+                           </label>
                         </li>
                         <li class="collection-item">
                             <label>
