@@ -10,7 +10,7 @@ export const SmartTileLayer = L.TileLayer.extend({
     },
 
     getTrueTileUrl: function (coords, zoom) {
-        var data = {
+        const data = {
             r: Browser.retina ? '@2x' : '',
             s: this._getSubdomain(coords),
             x: coords.x,
@@ -19,7 +19,7 @@ export const SmartTileLayer = L.TileLayer.extend({
             z: zoom
         };
         if (this._map && !this._map.options.crs.infinite) {
-            var invertedY = this._globalTileRange.max.y - coords.y;
+            const invertedY = this._globalTileRange.max.y - coords.y;
             if (this.options.tms) {
                 data['y'] = invertedY;
             }
@@ -28,7 +28,7 @@ export const SmartTileLayer = L.TileLayer.extend({
 
         data['cache'] = this.cache[data['map'] + ':' + data['x'] + ':' + data['y'] + ':' + data['z']];
 
-        if (!data['cache'] || data['cache'] == -1) {
+        if (!data['cache'] || data['cache'] === -1) {
             return this.invalidTile;
         }
 
@@ -36,8 +36,8 @@ export const SmartTileLayer = L.TileLayer.extend({
     },
 
     refresh: function (x, y, z) {
-        var zoom = z,
-            maxZoom = this.options.maxZoom,
+        let zoom = z;
+        const maxZoom = this.options.maxZoom,
             zoomReverse = this.options.zoomReverse,
             zoomOffset = this.options.zoomOffset;
 
@@ -47,9 +47,9 @@ export const SmartTileLayer = L.TileLayer.extend({
 
         zoom = zoom + zoomOffset;
 
-        var key = x + ':' + y + ':' + zoom;
+        const key = x + ':' + y + ':' + zoom;
 
-        var tile = this._tiles[key];
+        const tile = this._tiles[key];
         if (tile) {
             tile.el.src = this.getTrueTileUrl({x: x, y: y}, z);
         }

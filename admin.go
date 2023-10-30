@@ -178,7 +178,7 @@ func (m *Map) wipe(rw http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
-	/*for z := 0; z <= 5; z++ {
+	/*for z := 1; z <= 6; z++ {
 		os.RemoveAll(fmt.Sprintf("%s/%d", m.gridStorage, z))
 	}*/
 	http.Redirect(rw, req, "/admin/", 302)
@@ -278,7 +278,7 @@ func (m *Map) rebuildZooms(rw http.ResponseWriter, req *http.Request) {
 		}
 		m.SaveTile(g.m, g.c, 0, fmt.Sprintf("grids/%s.png", id), time.Now().UnixNano())
 	}
-	for z := 1; z <= 5; z++ {
+	for z := 1; z <= 6; z++ {
 		process := needProcess
 		needProcess = map[zoomproc]struct{}{}
 		for p := range process {
@@ -386,7 +386,7 @@ func (m *Map) wipeTile(rw http.ResponseWriter, req *http.Request) {
 	})
 
 	m.SaveTile(mapid, c, 0, "", -1)
-	for z := 1; z <= 5; z++ {
+	for z := 1; z <= 6; z++ {
 		c = c.Parent()
 		m.updateZoomLevel(mapid, c, z)
 	}
@@ -495,7 +495,7 @@ func (m *Map) setCoords(rw http.ResponseWriter, req *http.Request) {
 		m.SaveTile(td.MapID, td.Coord, td.Zoom, td.File, time.Now().UnixNano())
 		needProcess[zoomproc{c: Coord{X: td.Coord.X, Y: td.Coord.Y}.Parent(), m: td.MapID}] = struct{}{}
 	}
-	for z := 1; z <= 5; z++ {
+	for z := 1; z <= 6; z++ {
 		process := needProcess
 		needProcess = map[zoomproc]struct{}{}
 		for p := range process {

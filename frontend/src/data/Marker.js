@@ -2,9 +2,11 @@ import {HnHMaxZoom, ImageIcon} from "../utils/LeafletCustomTypes";
 import * as L from "leaflet";
 
 function detectType(name) {
-    if (name === "gfx/invobjs/small/bush" || name === "gfx/invobjs/small/bumling") return "quest";
+    if (name === "gfx/invobjs/small/bush" || name === "gfx/invobjs/small/bumling" || name === "gfx/terobjs/mm/gianttoad") return "quest";
+    if (name === "gfx/terobjs/mm/thingwall") return "thingwall";
     if (name === "custom") return "custom";
-    return name.substring("gfx/terobjs/mm/".length);
+    let idx = name.lastIndexOf("/");
+    return idx === -1 ? name : name.substring(name.lastIndexOf("/") + 1);
 }
 
 export class Marker {
@@ -34,7 +36,10 @@ export class Marker {
         if (!this.hidden) {
             let icon;
 
-            if (this.image == "gfx/terobjs/mm/custom") {
+            let isCustom = this.image === "gfx/terobjs/mm/custom";
+            let isCave = this.name.toLowerCase() === "cave";
+
+            if (isCustom && !isCave) {
                 icon = new ImageIcon({
                     iconUrl: 'gfx/terobjs/mm/custom.png',
                     iconSize: [21, 23],
@@ -43,11 +48,24 @@ export class Marker {
                     tooltipAnchor: [1, 3]
                 })
             } else {
-                icon = new ImageIcon({iconUrl: `${this.image}.png`, iconSize: [24, 24]});
+                let zoom = HnHMaxZoom - mapview.map.getZoom();
+                let hsz = 9;
+                let url = `${this.image}.png`;
+                if (isCave)
+                    url = 'gfx/hud/mmap/cave.png';
+                icon = new ImageIcon({iconUrl: url, iconSize: [hsz * 2, hsz * 2], iconAnchor: [hsz, hsz]});
             }
 
             let position = mapview.map.unproject([this.position.x, this.position.y], HnHMaxZoom);
             this.marker = L.marker(position, {icon: icon, title: this.name});
+            if (this.type === "quest")
+                this.marker.bindTooltip("<div style='color:#FDB800;'><b>" + this.name + "</b></div>", { permanent: true, direction: 'top', opacity: 0.9 });
+            else if (this.type === "thingwall")
+                this.marker.bindTooltip("<div style='color:#00cffd;'><b>" + this.name + "</b></div>", { permanent: true, direction: 'top', opacity: 0.9 });
+            // this.marker.bindPopup(this.image);
+            // this.marker.on('mouseover',function(ev) {
+            //     ev.target.openPopup();
+            // });
             this.marker.addTo(mapview.markerLayer);
             this.marker.on("click", this.callClickCallback.bind(this));
             this.marker.on("contextmenu", this.callContextCallback.bind(this));

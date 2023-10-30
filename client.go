@@ -476,7 +476,7 @@ func (m *Map) gridUpdate(rw http.ResponseWriter, req *http.Request) {
 		m.SaveTile(op.mapid, Coord{X: op.x, Y: op.y}, 0, op.f, time.Now().UnixNano())
 		needProcess[zoomproc{c: Coord{X: op.x, Y: op.y}.Parent(), m: op.mapid}] = struct{}{}
 	}
-	for z := 1; z <= 5; z++ {
+	for z := 1; z <= 6; z++ {
 		process := needProcess
 		needProcess = map[zoomproc]struct{}{}
 		for p := range process {
@@ -658,7 +658,7 @@ func (m *Map) gridUpload(rw http.ResponseWriter, req *http.Request) {
 		m.SaveTile(mapid, cur.Coord, 0, fmt.Sprintf("grids/%s.png", cur.ID), time.Now().UnixNano())
 
 		c := cur.Coord
-		for z := 1; z <= 5; z++ {
+		for z := 1; z <= 6; z++ {
 			c = c.Parent()
 			m.updateZoomLevel(mapid, c, z)
 		}

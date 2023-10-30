@@ -9,7 +9,7 @@
         <v-btn
             icon
             @click.stop="mini = !mini"
-            style="margin-left: -6px;"
+            style="/*margin-left: -6px;*/"
         >
           <v-icon>mdi-arrow-expand</v-icon>
         </v-btn>
@@ -77,8 +77,40 @@
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title>
-              <label class="title">Jump to Any Marker</label>
+              <label class="title">Markers</label>
               <v-autocomplete return-object outlined dense :items="allMarks" v-model="selectedMarker"
+                              placeholder="Select Marker">
+
+                <template v-slot:item="data">
+                  <img class="mr-2" style="width:24px;height: 24px;" :src="data.item.image + '.png'"/>
+                  {{ data.item.name }}
+                </template>
+              </v-autocomplete>
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title>
+              <label class="title">Thingwalls</label>
+              <v-autocomplete return-object outlined dense :items="thingMarks" v-model="selectedThing"
+                              placeholder="Select Marker">
+
+                <template v-slot:item="data">
+                  <img class="mr-2" style="width:24px;height: 24px;" :src="data.item.image + '.png'"/>
+                  {{ data.item.name }}
+                </template>
+              </v-autocomplete>
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title>
+              <label class="title">Quest Givers</label>
+              <v-autocomplete return-object outlined dense :items="questMarks" v-model="selectedQuest"
                               placeholder="Select Marker">
 
                 <template v-slot:item="data">
@@ -211,10 +243,15 @@ export default {
       zz: false,
       markersCache: [],
       allMarks: [],
+      marksCategories: [],
+      thingMarks: [],
+      questMarks: [],
       players: [],
       maps: [],
       selectedMap: null,
       selectedMarker: null,
+      selectedQuest: null,
+      selectedThing: null,
       selectedPlayer: {value: false},
       overlayMap: {value: false},
       auths: [],
@@ -238,7 +275,7 @@ export default {
       if (value) {
         this.markers.getElements().forEach(it => it.remove(this));
       } else {
-        this.markers.getElements().filter(it => it.map == this.mapid || it.map == this.overlayLayer.map).forEach(it => it.add(this));
+        this.markers.getElements().filter(it => it.map === this.mapid || it.map === this.overlayLayer.map).forEach(it => it.add(this));
       }
       this.markersHidden = value;
     },
@@ -276,14 +313,14 @@ export default {
         this.overlayLayer.redraw();
         if (!this.markersHidden) {
           this.markers.getElements().forEach(it => it.remove(this));
-          this.markers.getElements().filter(it => it.map == this.mapid || it.map == this.overlayLayer.map).forEach(it => it.add(this));
+          this.markers.getElements().filter(it => it.map === this.mapid || it.map === this.overlayLayer.map).forEach(it => it.add(this));
         }
       } else {
         this.overlayLayer.map = -1;
         this.overlayLayer.redraw();
         if (!this.markersHidden) {
           this.markers.getElements().forEach(it => it.remove(this));
-          this.markers.getElements().filter(it => it.map == this.mapid).forEach(it => it.add(this));
+          this.markers.getElements().filter(it => it.map === this.mapid).forEach(it => it.add(this));
         }
       }
     },
@@ -297,6 +334,40 @@ export default {
         this.maps.forEach((map) => {
           if (markerMapId === map.ID) {
             this.selectedMap = map;
+            return;
+          }
+        })
+
+        this.map.setView(value.marker.getLatLng(), this.map.getZoom());
+      }
+    },
+    selectedQuest(value) {
+      //selectedMap
+      console.log('selectedQuest', value);
+      console.log('selectedQuest maps', this.maps);
+      if (value) {
+        let markerMapId = value.map;
+
+        this.maps.forEach((map) => {
+          if (markerMapId === map.ID) {
+            this.selectedQuest = map;
+            return;
+          }
+        })
+
+        this.map.setView(value.marker.getLatLng(), this.map.getZoom());
+      }
+    },
+    selectedThing(value) {
+      //selectedMap
+      console.log('selectedThing', value);
+      console.log('selectedThing maps', this.maps);
+      if (value) {
+        let markerMapId = value.map;
+
+        this.maps.forEach((map) => {
+          if (markerMapId === map.ID) {
+            this.selectedThing = map;
             return;
           }
         })
@@ -353,7 +424,7 @@ export default {
 
       // Update url on manual drag, zoom
       this.map.on("drag", () => {
-        let point = this.map.project(this.map.getCenter(), 6);
+        let point = this.map.project(this.map.getCenter(), HnHMaxZoom);
         let coordinate = {x: ~~(point.x / TileSize), y: ~~(point.y / TileSize), z: this.map.getZoom()};
         this.$router.replace({path: `/grid/${this.mapid}/${coordinate.x}/${coordinate.y}/${coordinate.z}`});
         this.trackingCharacterId = -1;
@@ -362,7 +433,7 @@ export default {
         if (this.autoMode) {
           this.autoMode = false;
         } else {
-          let point = this.map.project(this.map.getCenter(), 6);
+          let point = this.map.project(this.map.getCenter(), HnHMaxZoom);
           let coordinate = {
             x: Math.floor(point.x / TileSize),
             y: Math.floor(point.y / TileSize),
@@ -374,8 +445,8 @@ export default {
       });
 
       this.layer = new SmartTileLayer('grids/{map}/{z}/{x}_{y}.png?{cache}', {
-        minZoom: 1,
-        maxZoom: 6,
+        minZoom: HnHMinZoom,
+        maxZoom: HnHMaxZoom,
         zoomOffset: 0,
         zoomReverse: true,
         tileSize: TileSize
@@ -384,12 +455,12 @@ export default {
       this.layer.addTo(this.map);
 
       this.overlayLayer = new SmartTileLayer('grids/{map}/{z}/{x}_{y}.png?{cache}', {
-        minZoom: 1,
-        maxZoom: 6,
+        minZoom: HnHMinZoom,
+        maxZoom: HnHMaxZoom,
         zoomOffset: 0,
         zoomReverse: true,
         tileSize: TileSize,
-        opacity: 0.5
+        opacity: 0.6
       });
       this.overlayLayer.invalidTile = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
       this.overlayLayer.addTo(this.map);
@@ -401,12 +472,12 @@ export default {
       this.markerLayer.addTo(this.map);
 
       /*this.map.on('mousemove', (mev) => {
-          coords = this.map.project(mev.latlng, 6);
+          coords = this.map.project(mev.latlng, HnHMaxZoom);
       })*/
 
       this.map.on('contextmenu', ((mev) => {
         if (this.auths.includes('admin') || this.auths.includes('writer')) {
-          let point = this.map.project(mev.latlng, 6);
+          let point = this.map.project(mev.latlng, HnHMaxZoom);
           let coords = {x: Math.floor(point.x / TileSize), y: Math.floor(point.y / TileSize)};
           this.$refs.menu.open(mev.originalEvent, {coords: coords});
         }
@@ -418,7 +489,7 @@ export default {
         for (var update of updates) {
           var key = update['M'] + ':' + update['X'] + ':' + update['Y'] + ':' + update['Z'];
           this.layer.cache[key] = update['T'];
-          if (this.layer.map == update['M']) {
+          if (this.layer.map === update['M']) {
             this.layer.refresh(update['X'], update['Y'], update['Z']);
           }
         }
@@ -426,9 +497,9 @@ export default {
 
       this.source.addEventListener('merge', ((e) => {
         var merge = JSON.parse(e.data);
-        if (this.mapid == merge['From']) {
+        if (this.mapid === merge['From']) {
           let mapTo = merge['To'];
-          let point = this.map.project(this.map.getCenter(), 6);
+          let point = this.map.project(this.map.getCenter(), HnHMaxZoom);
           let coordinate = {
             x: Math.floor(point.x / TileSize),
             y: Math.floor(point.y / TileSize),
@@ -462,7 +533,7 @@ export default {
       } else if (this.$route.params.gridX && this.$route.params.gridY && this.$route.params.zoom) { // Navigate to specific grid
         let latLng = this.toLatLng(this.$route.params.gridX * 100, this.$route.params.gridY * 100);
 
-        if (this.mapid != this.$route.params.map) {
+        if (this.mapid !== this.$route.params.map) {
           this.changeMap(this.$route.params.map);
         }
 
@@ -492,14 +563,14 @@ export default {
     updateMarkers(markersData) {
       this.markers.update(markersData.map(it => new Marker(it)),
           (marker) => { // Add
-            if (marker.map == this.mapid || marker.map == this.overlayLayer.map) {
+            if (marker.map === this.mapid || marker.map === this.overlayLayer.map) {
               marker.add(this);
             }
             marker.setClickCallback(() => {
               this.map.setView(marker.marker.getLatLng(), HnHMaxZoom);
             });
             marker.setContextMenu((mev) => {
-              if (this.auths.includes('admin')) {
+              if (this.auths.includes('admin') || this.auths.includes('writer')) {
                 this.$refs.markermenu.open(mev.originalEvent, {name: marker.name, id: marker.id});
               }
             });
@@ -512,9 +583,25 @@ export default {
           });
       this.markersCache.length = 0;
       this.markers.getElements().forEach(it => this.markersCache.push(it));
+      this.markersCache.sort((a, b) => {
+        let im = a.image.localeCompare(b.image);
+        return im === 0 ? a.name.localeCompare(b.name) : im;
+      });
 
       this.allMarks.length = 0;
-      this.markersCache.filter(it => it.text != null && it.text.length > 0 && !it.hidden).forEach(it => this.allMarks.push(it));
+      this.thingMarks.length = 0;
+      this.questMarks.length = 0;
+      this.markersCache.filter(it => it.text != null && it.text.length > 0 && !it.hidden).forEach(it => {
+        this.allMarks.push(it);
+        if (it.type === "thingwall")
+          this.thingMarks.push(it);
+        if (it.type === "quest")
+          this.questMarks.push(it);
+
+        if (!this.marksCategories.includes(it.type))
+          this.marksCategories.push(it.type);
+      });
+      console.log(this.marksCategories);
     },
     updateCharacters(charactersData) {
       this.characters.update(charactersData.map(it => new Character(it)),
@@ -528,8 +615,8 @@ export default {
             character.remove(this);
           },
           (character, updated) => { // Update
-            if (this.trackingCharacterId == updated.id) {
-              if (this.mapid != updated.map) {
+            if (this.trackingCharacterId === updated.id) {
+              if (this.mapid !== updated.map) {
                 this.changeMap(updated.map);
               }
               let latlng = this.map.unproject([updated.position.x, updated.position.y], HnHMaxZoom);
@@ -575,7 +662,7 @@ export default {
       });
     },
     changeMap(mapid) {
-      if (mapid != this.mapid) {
+      if (mapid !== this.mapid) {
         this.mapid = mapid;
         this.layer.map = this.mapid;
         this.layer.redraw();
@@ -583,7 +670,7 @@ export default {
         this.overlayLayer.redraw();
         if (!this.markersHidden) {
           this.markers.getElements().forEach(it => it.remove(this));
-          this.markers.getElements().filter(it => it.map == this.mapid).forEach(it => it.add(this));
+          this.markers.getElements().filter(it => it.map === this.mapid).forEach(it => it.add(this));
         }
         this.characters.getElements().forEach(it => {
           it.remove(this);
@@ -596,12 +683,25 @@ export default {
 </script>
 
 <style>
+.container {
+  max-width: 100%;
+}
+
 .map {
+  width: 100vw;
   height: 100vh;
 }
 
 .leaflet-container {
   background: #000;
+}
+
+.container {
+  padding: 0px !important;
+}
+
+.leaflet-control {
+  margin: auto !important;
 }
 
 .map-tile {
@@ -615,6 +715,9 @@ export default {
   position: absolute;
   left: 2px;
   top: 2px;
+  color: #FDB800;
+  font-size: 10px;
+  text-shadow: -1px -1px #000, 1px 1px #000, -1px 1px #000, 1px -1px #000;
 }
 
 .control-panel {
@@ -622,6 +725,64 @@ export default {
   top: 10%;
   left: 10px;
   z-index: 502;
+}
+
+.v-list-item {
+  padding: 0px !important;
+  min-height: 0px !important;
+  margin-left: 0 !important;
+  height: auto !important;
+}
+
+.v-btn {
+  padding: 0px !important;
+}
+
+.v-list {
+  padding: 5px !important;
+  height: auto !important;
+  min-height: 0px !important;
+}
+
+.v-navigation-drawer__content {
+  padding: 0px !important;
+}
+
+.v-navigation-drawer {
+  width: auto !important;
+}
+
+.v-text-field__details {
+  min-height: 0px !important;
+  margin: 0px !important;
+}
+
+.v-messages {
+  min-height: 0px !important;
+}
+
+.v-list-item__content {
+  padding: 0px !important;
+}
+
+.v-input__slot {
+  padding: 0px 5px !important;
+}
+
+.leaflet-tooltip {
+  background-color: transparent;
+  padding: 0px;
+  border: none;
+  box-shadow: none;
+  color: #FDB800;
+  font-size: 10px;
+  text-shadow: -1px -1px #000, 1px 1px #000, -1px 1px #000, 1px -1px #000;
+}
+.leaflet-tooltip-top:before,
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+  border: none !important;
 }
 
 .hidden {

@@ -1,4 +1,4 @@
-FROM golang:1.21.3 AS gobuilder
+FROM golang:1.21.3-alpine AS gobuilder
 
 RUN mkdir /hnh-map
 WORKDIR /hnh-map
@@ -23,7 +23,7 @@ RUN npm install
 COPY frontend/ ./
 RUN npm run build
 
-FROM golang:1.21.3
+FROM alpine:3.15.10
 
 RUN mkdir /hnh-map
 WORKDIR /hnh-map
