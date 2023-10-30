@@ -9,16 +9,16 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.12.1",
-    "core-js": "^3.6.5",
-    "leaflet": "^1.7.1",
-    "miragejs": "^0.1.41",
+    "core-js": "^3.33.2",
+    "leaflet": "^1.9.4",
+    "miragejs": "^0.1.48",
     "vue": "^2.6.11",
     "vue-context": "^6.0.0",
-    "vue-js-modal": "^2.0.0-rc.6",
+    "vue-js-modal": "^2.0.1",
     "vue-resource": "^1.5.2",
     "vue-router": "^3.2.0",
     "vue-search-select": "^2.9.3",
-    "vue2-leaflet": "^2.7.0",
+    "vue2-leaflet": "^2.7.1",
     "vuetify": "^2.4.0"
   },
   "devDependencies": {
@@ -31,9 +31,9 @@
     "eslint-plugin-vue": "^6.2.2",
     "sass": "^1.32.8",
     "sass-loader": "^10.0.0",
-    "vue-cli-plugin-vuetify": "~2.3.1",
+    "vue-cli-plugin-vuetify": "~2.5.8",
     "vue-template-compiler": "^2.6.11",
-    "vuetify-loader": "^1.7.0"
+    "vuetify-loader": "^1.9.2"
   },
   "eslintConfig": {
     "root": true,

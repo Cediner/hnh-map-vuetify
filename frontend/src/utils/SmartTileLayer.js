@@ -37,9 +37,9 @@ export const SmartTileLayer = L.TileLayer.extend({
 
     refresh: function (x, y, z) {
         let zoom = z;
-        const maxZoom = this.options.maxZoom,
-            zoomReverse = this.options.zoomReverse,
-            zoomOffset = this.options.zoomOffset;
+        let maxZoom = this.options.maxZoom;
+        let zoomReverse = this.options.zoomReverse;
+        let zoomOffset = this.options.zoomOffset;
 
         if (zoomReverse) {
             zoom = maxZoom - zoom;
@@ -47,9 +47,9 @@ export const SmartTileLayer = L.TileLayer.extend({
 
         zoom = zoom + zoomOffset;
 
-        const key = x + ':' + y + ':' + zoom;
+        let key = x + ':' + y + ':' + zoom;
 
-        const tile = this._tiles[key];
+        let tile = this._tiles[key];
         if (tile) {
             tile.el.src = this.getTrueTileUrl({x: x, y: y}, z);
         }

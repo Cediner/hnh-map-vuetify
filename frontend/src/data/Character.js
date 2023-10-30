@@ -28,8 +28,12 @@ export class Character {
     add(mapview) {
         if (this.map === mapview.mapid) {
             let position = mapview.map.unproject([this.position.x, this.position.y], HnHMaxZoom);
-            this.marker = L.marker(position, {title: this.name});
-            this.marker.bindTooltip("<div style='color:#48fd00;'><b>" + this.name + "</b></div>", { permanent: true, direction: 'top', opacity: 1 });
+            this.marker = L.marker(position, {riseOnHover: true/*title: this.name*/});
+            this.marker.bindTooltip("<div style='color:#48fd00;'><b>" + this.name + "</b></div>", { permanent: true, direction: 'top', opacity: 1, offset: [-13, 0] });
+            this.marker.bindPopup(this.name);
+            this.marker.on('mouseover', function(ev) {
+                ev.target.openPopup();
+            });
             this.marker.on("click", this.callCallback.bind(this));
             this.marker.addTo(mapview.map)
         }

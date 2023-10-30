@@ -38,6 +38,7 @@ export class Marker {
 
             let isCustom = this.image === "gfx/terobjs/mm/custom";
             let isCave = this.name.toLowerCase() === "cave";
+            let hsz = 9;
 
             if (isCustom && !isCave) {
                 icon = new ImageIcon({
@@ -49,7 +50,6 @@ export class Marker {
                 })
             } else {
                 let zoom = HnHMaxZoom - mapview.map.getZoom();
-                let hsz = 9;
                 let url = `${this.image}.png`;
                 if (isCave)
                     url = 'gfx/hud/mmap/cave.png';
@@ -57,15 +57,15 @@ export class Marker {
             }
 
             let position = mapview.map.unproject([this.position.x, this.position.y], HnHMaxZoom);
-            this.marker = L.marker(position, {icon: icon, title: this.name});
+            this.marker = L.marker(position, {icon: icon, riseOnHover: true/*, title: this.name*/});
             if (this.type === "quest")
                 this.marker.bindTooltip("<div style='color:#FDB800;'><b>" + this.name + "</b></div>", { permanent: true, direction: 'top', opacity: 0.9 });
             else if (this.type === "thingwall")
                 this.marker.bindTooltip("<div style='color:#00cffd;'><b>" + this.name + "</b></div>", { permanent: true, direction: 'top', opacity: 0.9 });
-            // this.marker.bindPopup(this.image);
-            // this.marker.on('mouseover',function(ev) {
-            //     ev.target.openPopup();
-            // });
+            this.marker.bindPopup(this.name);
+            this.marker.on('mouseover', function(ev) {
+                ev.target.openPopup();
+            });
             this.marker.addTo(mapview.markerLayer);
             this.marker.on("click", this.callClickCallback.bind(this));
             this.marker.on("contextmenu", this.callContextCallback.bind(this));

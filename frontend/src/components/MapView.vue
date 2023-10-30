@@ -271,7 +271,7 @@ export default {
         this.coordLayer.setOpacity(0);
       }
     },
-    hideMarkers(value) {
+    async hideMarkers(value) {
       if (value) {
         this.markers.getElements().forEach(it => it.remove(this));
       } else {
@@ -279,13 +279,13 @@ export default {
       }
       this.markersHidden = value;
     },
-    trackingCharacterId(value) {
+    async trackingCharacterId(value) {
       if (value !== -1) {
         let character = this.characters.byId(value);
         if (character) {
           this.changeMap(character.map);
           let latlng = this.map.unproject([character.position.x, character.position.y], HnHMaxZoom);
-          this.map.setView(latlng, HnHMaxZoom);
+          this.map.setView(latlng, HnHMaxZoom - Math.floor(HnHMaxZoom - HnHMinZoom) / 2);
 
           this.$router.push({path: `/character/${value}`});
           this.autoMode = true;
@@ -297,7 +297,7 @@ export default {
         }
       }
     },
-    selectedMap(value) {
+    async selectedMap(value) {
       console.log('selectedMap', value)
       if (value) {
         this.changeMap(value.ID);
@@ -305,9 +305,10 @@ export default {
         this.map.setView([0, 0], zoom);
 
         this.$router.replace({path: `/grid/${this.mapid}/0/0/${zoom}`});
+        this.trackingCharacterId = -1;
       }
     },
-    overlayMap(value) {
+    async overlayMap(value) {
       if (value) {
         this.overlayLayer.map = value.ID;
         this.overlayLayer.redraw();
@@ -334,14 +335,18 @@ export default {
         this.maps.forEach((map) => {
           if (markerMapId === map.ID) {
             this.selectedMap = map;
+
+            if (this.mapid !== map.ID)
+              this.changeMap(map.ID);
+
+            this.map.setView(value.marker.getLatLng(), HnHMaxZoom - Math.floor(HnHMaxZoom - HnHMinZoom) / 2);
+            this.trackingCharacterId = -1;
             return;
           }
         })
-
-        this.map.setView(value.marker.getLatLng(), this.map.getZoom());
       }
     },
-    selectedQuest(value) {
+    async selectedQuest(value) {
       //selectedMap
       console.log('selectedQuest', value);
       console.log('selectedQuest maps', this.maps);
@@ -350,15 +355,19 @@ export default {
 
         this.maps.forEach((map) => {
           if (markerMapId === map.ID) {
-            this.selectedQuest = map;
+            this.selectedMap = map;
+
+            if (this.mapid !== map.ID)
+              this.changeMap(map.ID);
+
+            this.map.setView(value.marker.getLatLng(), HnHMaxZoom - Math.floor(HnHMaxZoom - HnHMinZoom) / 2);
+            this.trackingCharacterId = -1;
             return;
           }
         })
-
-        this.map.setView(value.marker.getLatLng(), this.map.getZoom());
       }
     },
-    selectedThing(value) {
+    async selectedThing(value) {
       //selectedMap
       console.log('selectedThing', value);
       console.log('selectedThing maps', this.maps);
@@ -367,15 +376,19 @@ export default {
 
         this.maps.forEach((map) => {
           if (markerMapId === map.ID) {
-            this.selectedThing = map;
+            this.selectedMap = map;
+
+            if (this.mapid !== map.ID)
+              this.changeMap(map.ID);
+
+            this.map.setView(value.marker.getLatLng(), HnHMaxZoom - Math.floor(HnHMaxZoom - HnHMinZoom) / 2);
+            this.trackingCharacterId = -1;
             return;
           }
         })
-
-        this.map.setView(value.marker.getLatLng(), this.map.getZoom());
       }
     },
-    selectedPlayer(value) {
+    async selectedPlayer(value) {
       if (value && value.id) {
         this.trackingCharacterId = value.id;
       }
@@ -406,10 +419,10 @@ export default {
 
         // Disable all visuals
         attributionControl: false,
-        inertia: true,
-        zoomAnimation: true,
-        fadeAnimation: true,
-        markerZoomAnimation: true
+        inertia: false,
+        zoomAnimation: false,
+        fadeAnimation: false,
+        markerZoomAnimation: false
       });
 
       for (let id in maps) {
@@ -424,7 +437,7 @@ export default {
 
       // Update url on manual drag, zoom
       this.map.on("drag", () => {
-        let point = this.map.project(this.map.getCenter(), HnHMaxZoom);
+        let point = this.map.project(this.map.getCenter(), this.map.getZoom());
         let coordinate = {x: ~~(point.x / TileSize), y: ~~(point.y / TileSize), z: this.map.getZoom()};
         this.$router.replace({path: `/grid/${this.mapid}/${coordinate.x}/${coordinate.y}/${coordinate.z}`});
         this.trackingCharacterId = -1;
@@ -433,7 +446,7 @@ export default {
         if (this.autoMode) {
           this.autoMode = false;
         } else {
-          let point = this.map.project(this.map.getCenter(), HnHMaxZoom);
+          let point = this.map.project(this.map.getCenter(), this.map.getZoom());
           let coordinate = {
             x: Math.floor(point.x / TileSize),
             y: Math.floor(point.y / TileSize),
@@ -472,12 +485,12 @@ export default {
       this.markerLayer.addTo(this.map);
 
       /*this.map.on('mousemove', (mev) => {
-          coords = this.map.project(mev.latlng, HnHMaxZoom);
+          coords = this.map.project(mev.latlng, this.map.getZoom());
       })*/
 
       this.map.on('contextmenu', ((mev) => {
         if (this.auths.includes('admin') || this.auths.includes('writer')) {
-          let point = this.map.project(mev.latlng, HnHMaxZoom);
+          let point = this.map.project(mev.latlng, this.map.getZoom());
           let coords = {x: Math.floor(point.x / TileSize), y: Math.floor(point.y / TileSize)};
           this.$refs.menu.open(mev.originalEvent, {coords: coords});
         }
@@ -499,7 +512,7 @@ export default {
         var merge = JSON.parse(e.data);
         if (this.mapid === merge['From']) {
           let mapTo = merge['To'];
-          let point = this.map.project(this.map.getCenter(), HnHMaxZoom);
+          let point = this.map.project(this.map.getCenter(), this.map.getZoom());
           let coordinate = {
             x: Math.floor(point.x / TileSize),
             y: Math.floor(point.y / TileSize),
@@ -560,14 +573,14 @@ export default {
         this.$emit("error")
       });
     },
-    updateMarkers(markersData) {
+    async updateMarkers(markersData) {
       this.markers.update(markersData.map(it => new Marker(it)),
           (marker) => { // Add
             if (marker.map === this.mapid || marker.map === this.overlayLayer.map) {
               marker.add(this);
             }
             marker.setClickCallback(() => {
-              this.map.setView(marker.marker.getLatLng(), HnHMaxZoom);
+              this.map.setView(marker.marker.getLatLng(), this.map.getZoom());
             });
             marker.setContextMenu((mev) => {
               if (this.auths.includes('admin') || this.auths.includes('writer')) {
@@ -591,7 +604,7 @@ export default {
       this.allMarks.length = 0;
       this.thingMarks.length = 0;
       this.questMarks.length = 0;
-      this.markersCache.filter(it => it.text != null && it.text.length > 0 && !it.hidden).forEach(it => {
+      this.markersCache.filter(it => it.name != null && it.name.length > 0 && !it.hidden).forEach(it => {
         this.allMarks.push(it);
         if (it.type === "thingwall")
           this.thingMarks.push(it);
@@ -603,7 +616,7 @@ export default {
       });
       console.log(this.marksCategories);
     },
-    updateCharacters(charactersData) {
+    async updateCharacters(charactersData) {
       this.characters.update(charactersData.map(it => new Character(it)),
           (character) => { // Add
             character.add(this);
@@ -620,7 +633,7 @@ export default {
                 this.changeMap(updated.map);
               }
               let latlng = this.map.unproject([updated.position.x, updated.position.y], HnHMaxZoom);
-              this.map.setView(latlng, HnHMaxZoom);
+              this.map.setView(latlng, this.map.getZoom());
             }
             character.update(this, updated);
           }
@@ -635,7 +648,7 @@ export default {
     toLatLng(x, y) {
       return this.map.unproject([x, y], HnHMaxZoom);
     },
-    zoomOut() {
+    async zoomOut() {
       this.trackingCharacterId = -1;
       this.map.setView([0, 0], HnHMinZoom);
     },
@@ -661,7 +674,7 @@ export default {
         }
       });
     },
-    changeMap(mapid) {
+    async changeMap(mapid) {
       if (mapid !== this.mapid) {
         this.mapid = mapid;
         this.layer.map = this.mapid;
@@ -685,6 +698,7 @@ export default {
 <style>
 .container {
   max-width: 100%;
+  padding: 0px !important;
 }
 
 .map {
@@ -694,10 +708,6 @@ export default {
 
 .leaflet-container {
   background: #000;
-}
-
-.container {
-  padding: 0px !important;
 }
 
 .leaflet-control {
@@ -770,19 +780,34 @@ export default {
 }
 
 .leaflet-tooltip {
-  background-color: transparent;
-  padding: 0px;
-  border: none;
-  box-shadow: none;
-  color: #FDB800;
-  font-size: 10px;
-  text-shadow: -1px -1px #000, 1px 1px #000, -1px 1px #000, 1px -1px #000;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: #FDB800 !important;
+  font-size: 10px !important;
+  text-shadow: -1px -1px #000, 1px 1px #000, -1px 1px #000, 1px -1px #000 !important;
 }
 .leaflet-tooltip-top:before,
 .leaflet-tooltip-bottom:before,
 .leaflet-tooltip-left:before,
 .leaflet-tooltip-right:before {
   border: none !important;
+}
+
+.leaflet-popup-content-wrapper {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.leaflet-popup-content {
+  font-size: 13px !important;
+  color: #ffffff !important;
+  text-shadow: -1px -1px #000, 1px 1px #000, -1px 1px #000, 1px -1px #000 !important;
+  text-align: center !important;
+}
+
+.leaflet-popup-tip {
+  display: none !important;
 }
 
 .hidden {
