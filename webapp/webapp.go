@@ -3,7 +3,7 @@ package webapp
 import (
 	"html/template"
 	"io"
-	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 )
@@ -28,6 +28,7 @@ func Must(w *WebApp, err error) *WebApp {
 func (w *WebApp) LoadTemplates(path string) (*WebApp, error) {
 	err := filepath.Walk(path, func(file string, info os.FileInfo, err error) error {
 		if err != nil {
+			log.Println(err)
 			return err
 		}
 		if info.IsDir() {
@@ -35,10 +36,12 @@ func (w *WebApp) LoadTemplates(path string) (*WebApp, error) {
 		}
 		name, err := filepath.Rel(path, file)
 		if err != nil {
+			log.Println(err)
 			return err
 		}
-		raw, err := ioutil.ReadFile(file)
+		raw, err := os.ReadFile(file)
 		if err != nil {
+			log.Println(err)
 			return err
 		}
 		_, err = w.templates.New(name).Parse(string(raw))

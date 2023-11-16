@@ -54,7 +54,7 @@ func (m *Map) admin(rw http.ResponseWriter, req *http.Request) {
 		})
 	})
 
-	m.ExecuteTemplate(rw, "admin/index.tmpl", struct {
+	err := m.ExecuteTemplate(rw, filepath.FromSlash("admin/index.tmpl"), struct {
 		Page        Page
 		Session     *Session
 		Users       []string
@@ -69,6 +69,10 @@ func (m *Map) admin(rw http.ResponseWriter, req *http.Request) {
 		DefaultHide: defaultHide,
 		Maps:        maps,
 	})
+	if err != nil {
+		log.Println(err)
+		return
+	}
 }
 
 func (m *Map) adminUser(rw http.ResponseWriter, req *http.Request) {
@@ -129,7 +133,7 @@ func (m *Map) adminUser(rw http.ResponseWriter, req *http.Request) {
 		return json.Unmarshal(userRaw, &u)
 	})
 
-	m.ExecuteTemplate(rw, "admin/user.tmpl", struct {
+	m.ExecuteTemplate(rw, filepath.FromSlash("admin/user.tmpl"), struct {
 		Page     Page
 		Session  *Session
 		User     User
@@ -271,21 +275,29 @@ func (m *Map) rebuildZooms(rw http.ResponseWriter, req *http.Request) {
 	if noGrids {
 		return
 	}
-	for g, id := range saveGrid {
-		f := fmt.Sprintf("%s/grids/%s.png", m.gridStorage, id)
-		if _, err := os.Stat(f); err != nil {
-			continue
+	go func() {
+		log.Println("Rebuild Zooms...")
+		log.Println("Rebuild Zooms Saving...")
+		for g, id := range saveGrid {
+			f := fmt.Sprintf("%s/grids/%s.png", m.gridStorage, id)
+			if _, err := os.Stat(f); err != nil {
+				continue
+			}
+			//log.Println("Rebuild Zooms: Save: " + f)
+			m.SaveTile(g.m, g.c, 0, fmt.Sprintf("grids/%s.png", id), time.Now().UnixNano())
 		}
-		m.SaveTile(g.m, g.c, 0, fmt.Sprintf("grids/%s.png", id), time.Now().UnixNano())
-	}
-	for z := 1; z <= 6; z++ {
-		process := needProcess
-		needProcess = map[zoomproc]struct{}{}
-		for p := range process {
-			m.updateZoomLevel(p.m, p.c, z)
-			needProcess[zoomproc{p.c.Parent(), p.m}] = struct{}{}
+		for z := 1; z <= 6; z++ {
+			log.Printf("Rebuild Zooms: %d", z)
+			process := needProcess
+			needProcess = map[zoomproc]struct{}{}
+			for p := range process {
+				//log.Printf("Update Zooms: %d:%d", p.m, p.c)
+				m.updateZoomLevel(p.m, p.c, z)
+				needProcess[zoomproc{p.c.Parent(), p.m}] = struct{}{}
+			}
 		}
-	}
+		log.Println("Rebuild Zooms Finish!")
+	}()
 	http.Redirect(rw, req, "/admin/", 302)
 }
 
@@ -999,10 +1011,12 @@ func (m *Map) merge(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	for _, op := range ops {
-		m.SaveTile(op.mapid, Coord{X: op.x, Y: op.y}, 0, op.f, time.Now().UnixNano())
-	}
-	m.rebuildZooms(rw, req)
+	go func() {
+		for _, op := range ops {
+			m.SaveTile(op.mapid, Coord{X: op.x, Y: op.y}, 0, op.f, time.Now().UnixNano())
+		}
+		m.rebuildZooms(rw, req)
+	}()
 }
 
 func (m *Map) adminICMap(rw http.ResponseWriter, req *http.Request) {
@@ -1034,7 +1048,7 @@ func (m *Map) adminICMap(rw http.ResponseWriter, req *http.Request) {
 		switch action {
 		case "toggle-hidden":
 			mapinfo.Hidden = !mapinfo.Hidden
-			m.ExecuteTemplate(rw, "admin/index.tmpl:toggle-hidden", mapinfo)
+			m.ExecuteTemplate(rw, filepath.FromSlash("admin/index.tmpl:toggle-hidden"), mapinfo)
 		}
 		rawmap, err = json.Marshal(mapinfo)
 		if err != nil {
@@ -1098,7 +1112,7 @@ func (m *Map) adminMap(rw http.ResponseWriter, req *http.Request) {
 		return json.Unmarshal(mraw, &mi)
 	})
 
-	m.ExecuteTemplate(rw, "admin/map.tmpl", struct {
+	m.ExecuteTemplate(rw, filepath.FromSlash("admin/map.tmpl"), struct {
 		Page    Page
 		Session *Session
 		MapInfo MapInfo

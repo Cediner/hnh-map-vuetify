@@ -27,6 +27,8 @@ export class Marker {
 
     remove(mapview) {
         if (this.marker) {
+            console.log('remove', this.marker);
+            mapview.map.removeLayer(this.marker);
             this.marker.remove();
             this.marker = null;
         }
@@ -58,18 +60,65 @@ export class Marker {
 
             let position = mapview.map.unproject([this.position.x, this.position.y], HnHMaxZoom);
             this.marker = L.marker(position, {icon: icon, riseOnHover: true/*, title: this.name*/});
-            if (this.type === "quest")
-                this.marker.bindTooltip("<div style='color:#FDB800;'><b>" + this.name + "</b></div>", { permanent: true, direction: 'top', opacity: 0.9 });
-            else if (this.type === "thingwall")
-                this.marker.bindTooltip("<div style='color:#00cffd;'><b>" + this.name + "</b></div>", { permanent: true, direction: 'top', opacity: 0.9 });
-            this.marker.bindPopup(this.name);
-            this.marker.on('mouseover', function(ev) {
-                ev.target.openPopup();
+            let col = "#FFF";
+            let permanent = false;
+            if (this.type === "quest") {
+                col = "#FDB800";
+                permanent = true;
+            } else if (this.type === "thingwall") {
+                col = "#00cffd";
+                permanent = true;
+            }
+            this.marker.bindTooltip("<div style='color:" + col + ";'><b>" + this.name + "</b></div>", {
+                permanent: permanent,
+                direction: 'top',
+                opacity: 0.9
             });
+            this.marker.closeTooltip();
+            this.marker.on('mouseover', function(ev) {
+                if (ev.target.options.permanent === false) {
+                    ev.target.openTooltip();
+                }
+            });
+            this.marker.on('mouseout', function(ev) {
+                if (ev.target.options.permanent === false) {
+                    ev.target.closeTooltip();
+                }
+            });
+            // this.marker.bindPopup(this.name);
+            // this.marker.on('mouseover', function(ev) {
+            //     ev.target.openPopup();
+            // });
+            // this.marker.on('mouseout', function(ev) {
+            //     ev.target.closePopup();
+            // });
             this.marker.addTo(mapview.markerLayer);
             this.marker.on("click", this.callClickCallback.bind(this));
             this.marker.on("contextmenu", this.callContextCallback.bind(this));
         }
+    }
+
+    bindTooltip() {
+        console.log('bind', this.marker);
+        if (this.marker) {
+            this.marker.options.permanent = true;
+            this.marker.openTooltip();
+        }
+    }
+
+    unbindTooltip() {
+        console.log('unbind', this.marker);
+        if (this.marker) {
+            this.marker.options.permanent = false;
+            this.marker.closeTooltip();
+        }
+    }
+
+    tooltip(value) {
+        if (value)
+            this.bindTooltip();
+        else
+            this.unbindTooltip();
     }
 
     /**

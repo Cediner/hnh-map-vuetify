@@ -20,6 +20,7 @@ export class Character {
 
     remove(mapview) {
         if (this.marker) {
+            this.unbindTooltip();
             mapview.map.removeLayer(this.marker);
             this.marker = null;
         }
@@ -29,13 +30,28 @@ export class Character {
         if (this.map === mapview.mapid) {
             let position = mapview.map.unproject([this.position.x, this.position.y], HnHMaxZoom);
             this.marker = L.marker(position, {riseOnHover: true/*title: this.name*/});
-            this.marker.bindTooltip("<div style='color:#48fd00;'><b>" + this.name + "</b></div>", { permanent: true, direction: 'top', opacity: 1, offset: [-13, 0] });
             this.marker.bindPopup(this.name);
+            this.marker.bindTooltip("<div style='color:#48fd00;'><b>" + this.name + "</b></div>", { permanent: true, direction: 'top', opacity: 1, offset: [-13, 0] });
+            this.marker.closeTooltip();
             this.marker.on('mouseover', function(ev) {
-                ev.target.openPopup();
+                if (ev.target.options.permanent === false) {
+                    ev.target.openTooltip();
+                }
             });
+            this.marker.on('mouseout', function(ev) {
+                if (ev.target.options.permanent === false) {
+                    ev.target.closeTooltip();
+                }
+            });
+            // this.marker.on('mouseover', function(ev) {
+            //     ev.target.openPopup();
+            // });
+            // this.marker.on('mouseout', function(ev) {
+            //     ev.target.closePopup();
+            // });
             this.marker.on("click", this.callCallback.bind(this));
-            this.marker.addTo(mapview.map)
+            this.marker.addTo(mapview.map);
+            this.unbindTooltip();
         }
     }
 
@@ -52,6 +68,29 @@ export class Character {
             let position = mapview.map.unproject([updated.position.x, updated.position.y], HnHMaxZoom);
             this.marker.setLatLng(position);
         }
+    }
+
+    bindTooltip() {
+        console.log('bind', this.marker);
+        if (this.marker) {
+            this.marker.options.permanent = true;
+            this.marker.openTooltip();
+        }
+    }
+
+    unbindTooltip() {
+        console.log('unbind', this.marker);
+        if (this.marker) {
+            this.marker.options.permanent = false;
+            this.marker.closeTooltip();
+        }
+    }
+
+    tooltip(value) {
+        if (value)
+            this.bindTooltip();
+        else
+            this.unbindTooltip();
     }
 
     setClickCallback(callback) {

@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 
@@ -40,7 +41,7 @@ func (m *Map) index(rw http.ResponseWriter, req *http.Request) {
 		return nil
 	})
 
-	m.ExecuteTemplate(rw, "index.tmpl", struct {
+	err := m.ExecuteTemplate(rw, "index.tmpl", struct {
 		Page         Page
 		Session      *Session
 		UploadTokens []string
@@ -51,6 +52,10 @@ func (m *Map) index(rw http.ResponseWriter, req *http.Request) {
 		UploadTokens: tokens,
 		Prefix:       prefix,
 	})
+	if err != nil {
+		log.Println(err)
+		return
+	}
 }
 
 func (m *Map) login(rw http.ResponseWriter, req *http.Request) {
