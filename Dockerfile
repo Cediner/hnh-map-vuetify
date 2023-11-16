@@ -1,4 +1,4 @@
-FROM golang:1.21.3-alpine AS gobuilder
+FROM golang:1.21.4-alpine3.18 AS gobuilder
 
 RUN mkdir /hnh-map
 WORKDIR /hnh-map
@@ -10,7 +10,7 @@ RUN go mod download
 COPY . .
 RUN go build -o hnh-map.go
 
-FROM alpine:3.15.10 AS frontendbuilder
+FROM alpine:3.18.4 AS frontendbuilder
 
 RUN mkdir /frontend
 WORKDIR /frontend
@@ -18,12 +18,12 @@ WORKDIR /frontend
 RUN apk add --no-cache npm
 
 COPY frontend/package.json .
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 COPY frontend/ ./
-RUN npm run build
+RUN npm run build-new --omit=dev
 
-FROM alpine:3.15.10
+FROM alpine:3.18.4
 
 RUN mkdir /hnh-map
 WORKDIR /hnh-map

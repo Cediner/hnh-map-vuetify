@@ -27,7 +27,7 @@ export class Marker {
 
     remove(mapview) {
         if (this.marker) {
-            mapview.map.removeLayer(this.marker);
+            // mapview.map.removeLayer(this.marker);
             this.marker.remove();
             this.marker = null;
         }
