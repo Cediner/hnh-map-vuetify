@@ -71,7 +71,6 @@ export class Character {
     }
 
     bindTooltip() {
-        console.log('bind', this.marker);
         if (this.marker) {
             this.marker.options.permanent = true;
             this.marker.openTooltip();
@@ -79,7 +78,6 @@ export class Character {
     }
 
     unbindTooltip() {
-        console.log('unbind', this.marker);
         if (this.marker) {
             this.marker.options.permanent = false;
             this.marker.closeTooltip();

@@ -400,12 +400,12 @@ export default {
           let latlng = this.map.unproject([character.position.x, character.position.y], HnHMaxZoom);
           this.map.setView(latlng, HnHMaxZoom - Math.floor(HnHMaxZoom - HnHMinZoom) / 2);
 
-          this.$router.push({path: `/character/${value}`}).catch(()=>{});
+          this.$router.push({path: `/character/${value}`});
           this.autoMode = true;
         } else {
           this.map.setView([0, 0], HnHMinZoom);
           let mapid = this.maps[0].ID;
-          this.$router.replace({path: `/grid/${mapid}/0/0/${HnHMinZoom}`}).catch(()=>{});
+          this.$router.replace({path: `/grid/${mapid}/0/0/${HnHMinZoom}`});
           this.trackingCharacterId = -1;
         }
       }
@@ -417,7 +417,7 @@ export default {
         let zoom = this.map.getZoom();
         this.map.setView([0, 0], zoom);
 
-        this.$router.replace({path: `/grid/${this.mapid}/0/0/${zoom}`}).catch(()=>{});
+        this.$router.replace({path: `/grid/${this.mapid}/0/0/${zoom}`});
         this.trackingCharacterId = -1;
       }
     },
@@ -592,7 +592,7 @@ export default {
       this.map.on("drag", () => {
         let point = this.map.project(this.map.getCenter(), this.map.getZoom());
         let coordinate = {x: ~~(point.x / TileSize), y: ~~(point.y / TileSize), z: this.map.getZoom()};
-        this.$router.replace({path: `/grid/${this.mapid}/${coordinate.x}/${coordinate.y}/${coordinate.z}`}).catch(()=>{});
+        this.$router.replace({path: `/grid/${this.mapid}/${coordinate.x}/${coordinate.y}/${coordinate.z}`});
         this.trackingCharacterId = -1;
       });
       this.map.on("zoom", () => {
@@ -605,7 +605,7 @@ export default {
             y: Math.floor(point.y / TileSize),
             z: this.map.getZoom()
           };
-          this.$router.replace({path: `/grid/${this.mapid}/${coordinate.x}/${coordinate.y}/${coordinate.z}`}).catch(()=>{});
+          this.$router.replace({path: `/grid/${this.mapid}/${coordinate.x}/${coordinate.y}/${coordinate.z}`});
           this.trackingCharacterId = -1;
         }
       });
@@ -673,7 +673,7 @@ export default {
           };
           coordinate.x += merge['Shift'].x;
           coordinate.y += merge['Shift'].y;
-          this.$router.replace({path: `/grid/${mapTo}/${coordinate.x}/${coordinate.y}/${coordinate.z}`}).catch(()=>{});
+          this.$router.replace({path: `/grid/${mapTo}/${coordinate.x}/${coordinate.y}/${coordinate.z}`});
 
           let latLng = this.toLatLng(coordinate.x * 100, coordinate.y * 100);
 

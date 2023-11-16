@@ -54,7 +54,7 @@ func (m *Map) admin(rw http.ResponseWriter, req *http.Request) {
 		})
 	})
 
-	err := m.ExecuteTemplate(rw, filepath.FromSlash("admin/index.tmpl"), struct {
+	m.ExecuteTemplate(rw, filepath.FromSlash("admin/index.tmpl"), struct {
 		Page        Page
 		Session     *Session
 		Users       []string
@@ -69,10 +69,6 @@ func (m *Map) admin(rw http.ResponseWriter, req *http.Request) {
 		DefaultHide: defaultHide,
 		Maps:        maps,
 	})
-	if err != nil {
-		log.Println(err)
-		return
-	}
 }
 
 func (m *Map) adminUser(rw http.ResponseWriter, req *http.Request) {
@@ -1011,12 +1007,10 @@ func (m *Map) merge(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	go func() {
-		for _, op := range ops {
-			m.SaveTile(op.mapid, Coord{X: op.x, Y: op.y}, 0, op.f, time.Now().UnixNano())
-		}
-		m.rebuildZooms(rw, req)
-	}()
+	for _, op := range ops {
+		m.SaveTile(op.mapid, Coord{X: op.x, Y: op.y}, 0, op.f, time.Now().UnixNano())
+	}
+	m.rebuildZooms(rw, req)
 }
 
 func (m *Map) adminICMap(rw http.ResponseWriter, req *http.Request) {

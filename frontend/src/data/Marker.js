@@ -27,7 +27,6 @@ export class Marker {
 
     remove(mapview) {
         if (this.marker) {
-            console.log('remove', this.marker);
             mapview.map.removeLayer(this.marker);
             this.marker.remove();
             this.marker = null;
@@ -99,7 +98,6 @@ export class Marker {
     }
 
     bindTooltip() {
-        console.log('bind', this.marker);
         if (this.marker) {
             this.marker.options.permanent = true;
             this.marker.openTooltip();
@@ -107,7 +105,6 @@ export class Marker {
     }
 
     unbindTooltip() {
-        console.log('unbind', this.marker);
         if (this.marker) {
             this.marker.options.permanent = false;
             this.marker.closeTooltip();
