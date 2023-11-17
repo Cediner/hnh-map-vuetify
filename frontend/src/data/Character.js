@@ -23,6 +23,7 @@ export class Character {
         if (this.marker) {
             this.marker.unbindTooltip();
             mapview.map.removeLayer(this.marker);
+            this.marker.remove();
             this.marker = null;
         }
     }
@@ -36,6 +37,7 @@ export class Character {
             this.marker.bindTooltip("<div style='color:#48fd00;'><b>" + this.name + "</b></div>", {
                 permanent: true,
                 direction: 'top',
+                sticky: true,
                 opacity: 1,
                 offset: [-13, 0]
             });

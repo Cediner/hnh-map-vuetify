@@ -31,7 +31,7 @@ export class Marker {
         if (this.marker) {
             this.marker.unbindTooltip();
             mapview.map.removeLayer(this.marker);
-            // this.marker.remove();
+            this.marker.remove();
             this.marker = null;
         }
         this.view = false;
