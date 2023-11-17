@@ -12,6 +12,7 @@ export class Character {
         this.text = this.name;
         this.value = this.id;
         this.onClick = null;
+        this.tstate = false;
     }
 
     getId() {
@@ -20,7 +21,7 @@ export class Character {
 
     remove(mapview) {
         if (this.marker) {
-            this.unbindTooltip();
+            this.marker.unbindTooltip();
             mapview.map.removeLayer(this.marker);
             this.marker = null;
         }
@@ -30,18 +31,13 @@ export class Character {
         if (this.map === mapview.mapid) {
             let position = mapview.map.unproject([this.position.x, this.position.y], HnHMaxZoom);
             this.marker = L.marker(position, {riseOnHover: true/*title: this.name*/});
+            this.marker.marker = this;
             this.marker.bindPopup(this.name);
-            this.marker.bindTooltip("<div style='color:#48fd00;'><b>" + this.name + "</b></div>", { permanent: true, direction: 'top', opacity: 1, offset: [-13, 0] });
-            this.marker.closeTooltip();
-            this.marker.on('mouseover', function(ev) {
-                if (ev.target.options.permanent === false) {
-                    ev.target.openTooltip();
-                }
-            });
-            this.marker.on('mouseout', function(ev) {
-                if (ev.target.options.permanent === false) {
-                    ev.target.closeTooltip();
-                }
+            this.marker.bindTooltip("<div style='color:#48fd00;'><b>" + this.name + "</b></div>", {
+                permanent: true,
+                direction: 'top',
+                opacity: 1,
+                offset: [-13, 0]
             });
             // this.marker.on('mouseover', function(ev) {
             //     ev.target.openPopup();
@@ -71,15 +67,15 @@ export class Character {
     }
 
     bindTooltip() {
+        this.tstate = true;
         if (this.marker) {
-            this.marker.options.permanent = true;
             this.marker.openTooltip();
         }
     }
 
     unbindTooltip() {
+        this.tstate = false;
         if (this.marker) {
-            this.marker.options.permanent = false;
             this.marker.closeTooltip();
         }
     }

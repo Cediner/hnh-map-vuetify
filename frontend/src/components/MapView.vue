@@ -77,7 +77,7 @@
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title>
-<!--              <label class="title">Markers</label>-->
+              <!--              <label class="title">Markers</label>-->
               <v-autocomplete return-object outlined dense :items="otherMarks" v-model="selectedMarker"
                               placeholder="Select Marker">
 
@@ -103,7 +103,7 @@
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title>
-<!--              <label class="title">Thingwalls</label>-->
+              <!--              <label class="title">Thingwalls</label>-->
               <v-autocomplete return-object outlined dense :items="thingMarks" v-model="selectedThing"
                               placeholder="Select Marker">
 
@@ -139,7 +139,7 @@
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title>
-<!--              <label class="title">Quest Givers</label>-->
+              <!--              <label class="title">Quest Givers</label>-->
               <v-autocomplete return-object outlined dense :items="questMarks" v-model="selectedQuest"
                               placeholder="Select Marker">
 
@@ -176,7 +176,7 @@
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title>
-<!--              <label class="title">Jump to Player</label>-->
+              <!--              <label class="title">Jump to Player</label>-->
               <v-autocomplete return-object outlined dense :items="players" v-model="selectedPlayer"
                               placeholder="Select Player">
               </v-autocomplete>
@@ -342,30 +342,30 @@ export default {
     showMarkers(value) {
       console.log("showMarkers", value);
       if (!value) {
-        this.markers.getElements().filter(it => !(it.type === "thingwall" || it.type === "quest")).forEach(it => it.remove(this));
+        this.otherMarks.forEach(it => it.remove(this));
       } else {
-        this.markers.getElements().filter(it => !(it.type === "thingwall" || it.type === "quest")).filter(it => it.map === this.mapid || it.map === this.overlayLayer.map).forEach(it => it.add(this));
+        this.otherMarks.filter(it => it.map === this.mapid || it.map === this.overlayLayer.map).forEach(it => it.add(this));
       }
     },
     showThingwalls(value) {
       console.log("showThingwalls", value);
       if (!value) {
-        this.markers.getElements().filter(it => it.type === "thingwall").forEach(it => it.remove(this));
+        this.thingMarks.forEach(it => it.remove(this));
       } else {
-        this.markers.getElements().filter(it => it.type === "thingwall").filter(it => it.map === this.mapid || it.map === this.overlayLayer.map).forEach(it => {
+        this.thingMarks.filter(it => it.map === this.mapid || it.map === this.overlayLayer.map).forEach(it => {
           it.add(this);
-          it.tooltip(value);
+          it.tooltip(this.showThingwallTooltips);
         });
       }
     },
     showQuests(value) {
       console.log("showQuests", value);
       if (!value) {
-        this.markers.getElements().filter(it => it.type === "quest").forEach(it => it.remove(this));
+        this.questMarks.forEach(it => it.remove(this));
       } else {
-        this.markers.getElements().filter(it => it.type === "quest").filter(it => it.map === this.mapid || it.map === this.overlayLayer.map).forEach(it => {
+        this.questMarks.filter(it => it.map === this.mapid || it.map === this.overlayLayer.map).forEach(it => {
           it.add(this);
-          it.tooltip(value);
+          it.tooltip(this.showQuestTooltips);
         });
       }
     },
@@ -376,17 +376,17 @@ export default {
       } else {
         this.characters.getElements().filter(it => it.map === this.mapid || it.map === this.overlayLayer.map).forEach(it => {
           it.add(this);
-          it.tooltip(value);
+          it.tooltip(this.showPlayers);
         });
       }
     },
     showThingwallTooltips(value) {
       console.log("showThingwallTooltips", value);
-      this.markers.getElements().filter(it => it.type === "thingwall").forEach(it => it.tooltip(value));
+      this.thingMarks.forEach(it => it.tooltip(value));
     },
     showQuestTooltips(value) {
       console.log("showQuestTooltips", value);
-      this.markers.getElements().filter(it => it.type === "quest").forEach(it => it.tooltip(value));
+      this.questMarks.forEach(it => it.tooltip(value));
     },
     showPlayerTooltips(value) {
       console.log("showPlayerTooltips", value);
@@ -427,19 +427,19 @@ export default {
         this.overlayLayer.map = value.ID;
         this.overlayLayer.redraw();
         if (this.showMarkers) {
-          this.markers.getElements().filter(it => !(it.type === "thingwall" || it.type === "quest")).forEach(it => it.remove(this));
-          this.markers.getElements().filter(it => !(it.type === "thingwall" || it.type === "quest")).filter(it => it.map === this.mapid || it.map === this.overlayLayer.map).forEach(it => it.add(this));
+          this.otherMarks.forEach(it => it.remove(this));
+          this.otherMarks.filter(it => it.map === this.mapid || it.map === this.overlayLayer.map).forEach(it => it.add(this));
         }
         if (this.showThingwalls) {
-          this.markers.getElements().filter(it => it.type === "thingwall").forEach(it => it.remove(this));
-          this.markers.getElements().filter(it => it.type === "thingwall").filter(it => it.map === this.mapid || it.map === this.overlayLayer.map).forEach(it => {
+          this.thingMarks.forEach(it => it.remove(this));
+          this.thingMarks.filter(it => it.map === this.mapid || it.map === this.overlayLayer.map).forEach(it => {
             it.add(this);
             it.tooltip(this.showThingwallTooltips);
           });
         }
         if (this.showQuests) {
-          this.markers.getElements().filter(it => it.type === "quest").forEach(it => it.remove(this));
-          this.markers.getElements().filter(it => it.type === "quest").filter(it => it.map === this.mapid || it.map === this.overlayLayer.map).forEach(it => {
+          this.questMarks.forEach(it => it.remove(this));
+          this.questMarks.filter(it => it.map === this.mapid || it.map === this.overlayLayer.map).forEach(it => {
             it.add(this);
             it.tooltip(this.showQuestTooltips);
           });
@@ -448,26 +448,26 @@ export default {
           this.characters.getElements().forEach(it => it.remove(this));
           this.characters.getElements().filter(it => it.map === this.mapid || it.map === this.overlayLayer.map).forEach(it => {
             it.add(this);
-              it.tooltip(this.showPlayerTooltips);
+            it.tooltip(this.showPlayerTooltips);
           });
         }
       } else {
         this.overlayLayer.map = -1;
         this.overlayLayer.redraw();
         if (this.showMarkers) {
-          this.markers.getElements().filter(it => !(it.type === "thingwall" || it.type === "quest")).forEach(it => it.remove(this));
-          this.markers.getElements().filter(it => !(it.type === "thingwall" || it.type === "quest")).filter(it => it.map === this.mapid).forEach(it => it.add(this));
+          this.otherMarks.forEach(it => it.remove(this));
+          this.otherMarks.filter(it => it.map === this.mapid).forEach(it => it.add(this));
         }
         if (this.showThingwalls) {
-          this.markers.getElements().filter(it => it.type === "thingwall").forEach(it => it.remove(this));
-          this.markers.getElements().filter(it => it.type === "thingwall").filter(it => it.map === this.mapid).forEach(it => {
+          this.thingMarks.forEach(it => it.remove(this));
+          this.thingMarks.filter(it => it.map === this.mapid).forEach(it => {
             it.add(this);
             it.tooltip(this.showThingwallTooltips);
           });
         }
         if (this.showQuests) {
-          this.markers.getElements().filter(it => it.type === "quest").forEach(it => it.remove(this));
-          this.markers.getElements().filter(it => it.type === "quest").filter(it => it.map === this.mapid).forEach(it => {
+          this.questMarks.forEach(it => it.remove(this));
+          this.questMarks.filter(it => it.map === this.mapid).forEach(it => {
             it.add(this);
             it.tooltip(this.showPlayerTooltips);
           });
@@ -727,7 +727,16 @@ export default {
       });
     },
     updateMarkers(markersData) {
-      this.markers.update(markersData.map(it => new Marker(it)),
+      this.markers.update(markersData.map(it => {
+            let m = new Marker(it);
+            if (m.type === "thingwall")
+              m.tstate = this.showThingwallTooltips;
+            else if (m.type === "quest")
+              m.tstate = this.showQuestTooltips;
+            else
+              m.tstate = false;
+            return m;
+          }),
           (marker) => { // Add
             if (marker.map === this.mapid || marker.map === this.overlayLayer.map) {
               marker.add(this);
@@ -775,7 +784,11 @@ export default {
       });
     },
     updateCharacters(charactersData) {
-      this.characters.update(charactersData.map(it => new Character(it)),
+      this.characters.update(charactersData.map(it => {
+            let ch = new Character(it);
+            ch.tstate = this.showPlayerTooltips;
+            return ch;
+          }),
           (character) => { // Add
             character.add(this);
             character.setClickCallback(() => { // Zoom to character on marker click
@@ -840,20 +853,22 @@ export default {
         this.overlayLayer.map = -1;
         this.overlayLayer.redraw();
         if (this.showMarkers) {
-          this.markers.getElements().filter(it => !(it.type === "thingwall" || it.type === "quest")).forEach(it => it.remove(this));
-          this.markers.getElements().filter(it => !(it.type === "thingwall" || it.type === "quest")).filter(it => it.map === this.mapid).forEach(it => it.add(this));
+          this.otherMarks.forEach(it => it.remove(this));
+          this.otherMarks.filter(it => it.map === this.mapid).forEach(it => {
+            it.add(this);
+            it.tooltip(false);
+          });
         }
         if (this.showThingwalls) {
-          this.markers.getElements().filter(it => it.type === "thingwall").forEach(it => it.remove(this));
-          this.markers.getElements().filter(it => it.type === "thingwall").filter(it => it.map === this.mapid).forEach(it => {
+          this.thingMarks.forEach(it => it.remove(this));
+          this.thingMarks.filter(it => it.map === this.mapid).forEach(it => {
             it.add(this);
             it.tooltip(this.showThingwallTooltips);
           });
-
         }
         if (this.showQuests) {
-          this.markers.getElements().filter(it => it.type === "quest").forEach(it => it.remove(this));
-          this.markers.getElements().filter(it => it.type === "quest").filter(it => it.map === this.mapid).forEach(it => {
+          this.questMarks.forEach(it => it.remove(this));
+          this.questMarks.filter(it => it.map === this.mapid).forEach(it => {
             it.add(this);
             it.tooltip(this.showQuestTooltips);
           });
@@ -969,6 +984,7 @@ export default {
   font-size: 10px !important;
   text-shadow: -1px -1px #000, 1px 1px #000, -1px 1px #000, 1px -1px #000 !important;
 }
+
 .leaflet-tooltip-top:before,
 .leaflet-tooltip-bottom:before,
 .leaflet-tooltip-left:before,

@@ -23,17 +23,22 @@ export class Marker {
         this.map = markerData.map;
         this.onClick = null;
         this.onContext = null;
+        this.tstate = false;
+        this.view = false;
     }
 
     remove(mapview) {
         if (this.marker) {
-            // mapview.map.removeLayer(this.marker);
-            this.marker.remove();
+            this.marker.unbindTooltip();
+            mapview.map.removeLayer(this.marker);
+            // this.marker.remove();
             this.marker = null;
         }
+        this.view = false;
     }
 
     add(mapview) {
+        this.view = mapview.map;
         if (!this.hidden) {
             let icon;
 
@@ -50,38 +55,31 @@ export class Marker {
                     tooltipAnchor: [1, 3]
                 })
             } else {
-                let zoom = HnHMaxZoom - mapview.map.getZoom();
+                let zoom = HnHMaxZoom - this.view.getZoom();
                 let url = `${this.image}.png`;
                 if (isCave)
                     url = 'gfx/hud/mmap/cave.png';
                 icon = new ImageIcon({iconUrl: url, iconSize: [hsz * 2, hsz * 2], iconAnchor: [hsz, hsz]});
             }
 
-            let position = mapview.map.unproject([this.position.x, this.position.y], HnHMaxZoom);
+            let position = this.view.unproject([this.position.x, this.position.y], HnHMaxZoom);
             this.marker = L.marker(position, {icon: icon, riseOnHover: true/*, title: this.name*/});
             let col = "#FFF";
-            let permanent = false;
             if (this.type === "quest") {
                 col = "#FDB800";
-                permanent = true;
             } else if (this.type === "thingwall") {
                 col = "#00cffd";
-                permanent = true;
             }
+            this.marker.marker = this;
             this.marker.bindTooltip("<div style='color:" + col + ";'><b>" + this.name + "</b></div>", {
-                permanent: permanent,
+                permanent: false,
                 direction: 'top',
+                sticky: true,
                 opacity: 0.9
             });
-            this.marker.closeTooltip();
-            this.marker.on('mouseover', function(ev) {
-                if (ev.target.options.permanent === false) {
+            this.marker.on('mouseout', function (ev) {
+                if (ev.target.marker.tstate) {
                     ev.target.openTooltip();
-                }
-            });
-            this.marker.on('mouseout', function(ev) {
-                if (ev.target.options.permanent === false) {
-                    ev.target.closeTooltip();
                 }
             });
             // this.marker.bindPopup(this.name);
@@ -97,25 +95,34 @@ export class Marker {
         }
     }
 
+    tooltipState(value) {
+        this.tstate = value;
+    }
+
     bindTooltip() {
+        this.tstate = true;
         if (this.marker) {
-            this.marker.options.permanent = true;
             this.marker.openTooltip();
         }
     }
 
     unbindTooltip() {
+        this.tstate = false;
         if (this.marker) {
-            this.marker.options.permanent = false;
             this.marker.closeTooltip();
         }
     }
 
     tooltip(value) {
-        if (value)
-            this.bindTooltip();
-        else
-            this.unbindTooltip();
+        try {
+            console.log(this.name + " " + value);
+            if (value)
+                this.bindTooltip();
+            else
+                this.unbindTooltip();
+        } catch (e) {
+            console.log(e);
+        }
     }
 
     /**
