@@ -117,11 +117,11 @@ func (m *Map) updatePositions(rw http.ResponseWriter, req *http.Request, u User)
 		log.Println("Original json: ", string(buf))
 		return
 	}
-	groups := []int{}
+	var groups []int
 	if u.Auths.Has(AUTH_GROUP1) {
 		groups = append(groups, 1)
 	}
-	if u.Auths.Has(AUTH_GROUP1) {
+	if u.Auths.Has(AUTH_GROUP2) {
 		groups = append(groups, 2)
 	}
 	m.db.View(func(tx *bbolt.Tx) error {

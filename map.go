@@ -23,7 +23,7 @@ func (m *Map) getChars(rw http.ResponseWriter, req *http.Request) {
 		json.NewEncoder(rw).Encode([]interface{}{})
 		return
 	}
-	sg := []int{}
+	var sg []int
 	if s.Auths.Has(AUTH_GROUP1) {
 		sg = append(sg, 1)
 	}

@@ -145,7 +145,7 @@ type Character struct {
 	Map      int      `json:"map"`
 	Position Position `json:"position"`
 	Type     string   `json:"type"`
-	Group    []int
+	Group    []int    `json:"group"`
 	updated  time.Time
 }
 
