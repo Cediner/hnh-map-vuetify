@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -33,7 +32,7 @@ func (m *Map) getChars(rw http.ResponseWriter, req *http.Request) {
 		if b {
 			chars = append(chars, v)
 		}
-		log.Printf("Auth: %v, User: %v, Char: %v, %t\n", s.Auths, groups, v.group, b)
+		//log.Printf("Auth: %v, User: %v, Char: %v, %t\n", s.Auths, groups, v.group, b)
 	}
 	json.NewEncoder(rw).Encode(chars)
 }
