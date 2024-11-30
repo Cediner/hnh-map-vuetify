@@ -23,18 +23,12 @@ func (m *Map) getChars(rw http.ResponseWriter, req *http.Request) {
 		json.NewEncoder(rw).Encode([]interface{}{})
 		return
 	}
-	var sg []int
-	if s.Auths.Has(AUTH_GROUP1) {
-		sg = append(sg, 1)
-	}
-	if s.Auths.Has(AUTH_GROUP2) {
-		sg = append(sg, 2)
-	}
+	groups := groupArr(s.Auths)
 	chars := []Character{}
 	m.chmu.RLock()
 	defer m.chmu.RUnlock()
 	for _, v := range m.characters {
-		if hasCommonElement(sg, v.Group) {
+		if hasCommonElement(groups, v.Group) {
 			chars = append(chars, v)
 		}
 	}
@@ -141,19 +135,31 @@ func (m *Map) config(rw http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(rw).Encode(config)
 }
 
+func groupArr(a Auths) []int {
+	groups := []int{}
+	if a.Has(AUTH_GROUP1) {
+		groups = append(groups, 1)
+	}
+	if a.Has(AUTH_GROUP2) {
+		groups = append(groups, 2)
+	}
+
+	return groups
+}
+
 func hasCommonElement(arr1, arr2 []int) bool {
 	if len(arr2) == 0 {
 		return true
 	}
-	elements := make(map[int]bool)
-
-	for _, num := range arr1 {
-		elements[num] = true
+	if len(arr1) == 0 {
+		return false
 	}
 
-	for _, num := range arr2 {
-		if elements[num] {
-			return true
+	for _, num1 := range arr1 {
+		for _, num2 := range arr2 {
+			if num1 == num2 {
+				return true
+			}
 		}
 	}
 

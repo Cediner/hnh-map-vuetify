@@ -117,13 +117,7 @@ func (m *Map) updatePositions(rw http.ResponseWriter, req *http.Request, u User)
 		log.Println("Original json: ", string(buf))
 		return
 	}
-	var groups []int
-	if u.Auths.Has(AUTH_GROUP1) {
-		groups = append(groups, 1)
-	}
-	if u.Auths.Has(AUTH_GROUP2) {
-		groups = append(groups, 2)
-	}
+	groups := groupArr(u.Auths)
 	m.db.View(func(tx *bbolt.Tx) error {
 		grids := tx.Bucket([]byte("grids"))
 		if grids == nil {
