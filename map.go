@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -28,9 +29,11 @@ func (m *Map) getChars(rw http.ResponseWriter, req *http.Request) {
 	m.chmu.RLock()
 	defer m.chmu.RUnlock()
 	for _, v := range m.characters {
-		if hasCommonElement(groups, v.group) {
+		b := hasCommonElement(groups, v.group)
+		if b {
 			chars = append(chars, v)
 		}
+		fmt.Printf("User: %v, Char: %v, %t\n", groups, v.group, b)
 	}
 	json.NewEncoder(rw).Encode(chars)
 }
