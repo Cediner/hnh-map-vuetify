@@ -47,6 +47,18 @@
                         </li>
                         <li class="collection-item">
                             <label>
+                                <input type="checkbox" name="auths" value="point"{{if .User.Auths.Has "g1"}} checked="checked"{{end}}/>
+                                <span>Group 1</span>
+                            </label>
+                        </li>
+                        <li class="collection-item">
+                            <label>
+                                <input type="checkbox" name="auths" value="point"{{if .User.Auths.Has "g2"}} checked="checked"{{end}}/>
+                                <span>Group 2</span>
+                            </label>
+                        </li>
+                        <li class="collection-item">
+                            <label>
                                 <input type="checkbox" name="auths" value="upload"{{if .User.Auths.Has "upload"}} checked="checked"{{end}}/>
                                 <span>Upload</span>
                             </label>
