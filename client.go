@@ -143,7 +143,7 @@ func (m *Map) updatePositions(rw http.ResponseWriter, req *http.Request, u User)
 				},
 				Type:    craw.Type,
 				updated: time.Now(),
-				Group:   groups,
+				group:   groups,
 			}
 			old, ok := m.characters[id]
 			if !ok {
@@ -154,6 +154,7 @@ func (m *Map) updatePositions(rw http.ResponseWriter, req *http.Request, u User)
 						m.characters[id] = c
 					} else {
 						old.Position = c.Position
+						old.group = c.group
 						m.characters[id] = old
 					}
 				} else if old.Type != "unknown" {
@@ -161,6 +162,7 @@ func (m *Map) updatePositions(rw http.ResponseWriter, req *http.Request, u User)
 						m.characters[id] = c
 					} else {
 						old.Position = c.Position
+						old.group = c.group
 						m.characters[id] = old
 					}
 				} else {

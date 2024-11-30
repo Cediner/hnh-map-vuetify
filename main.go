@@ -145,7 +145,7 @@ type Character struct {
 	Map      int      `json:"map"`
 	Position Position `json:"position"`
 	Type     string   `json:"type"`
-	Group    []int
+	group    Group
 	updated  time.Time
 }
 
@@ -209,6 +209,8 @@ func (c Coord) Parent() Coord {
 }
 
 type Auths []string
+
+type Group []int
 
 func (a Auths) Has(auth string) bool {
 	for _, v := range a {

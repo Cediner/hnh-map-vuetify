@@ -28,7 +28,7 @@ func (m *Map) getChars(rw http.ResponseWriter, req *http.Request) {
 	m.chmu.RLock()
 	defer m.chmu.RUnlock()
 	for _, v := range m.characters {
-		if hasCommonElement(groups, v.Group) {
+		if hasCommonElement(groups, v.group) {
 			chars = append(chars, v)
 		}
 	}
@@ -154,7 +154,6 @@ func hasCommonElement(arr1, arr2 []int) bool {
 	if len(arr1) == 0 {
 		return false
 	}
-
 	for _, num1 := range arr1 {
 		for _, num2 := range arr2 {
 			if num1 == num2 {
