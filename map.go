@@ -23,11 +23,20 @@ func (m *Map) getChars(rw http.ResponseWriter, req *http.Request) {
 		json.NewEncoder(rw).Encode([]interface{}{})
 		return
 	}
+	sg := []int{}
+	if s.Auths.Has(AUTH_GROUP1) {
+		sg = append(sg, 1)
+	}
+	if s.Auths.Has(AUTH_GROUP2) {
+		sg = append(sg, 2)
+	}
 	chars := []Character{}
 	m.chmu.RLock()
 	defer m.chmu.RUnlock()
 	for _, v := range m.characters {
-		chars = append(chars, v)
+		if hasCommonElement(sg, v.Group) {
+			chars = append(chars, v)
+		}
 	}
 	json.NewEncoder(rw).Encode(chars)
 }
@@ -130,4 +139,23 @@ func (m *Map) config(rw http.ResponseWriter, req *http.Request) {
 		return nil
 	})
 	json.NewEncoder(rw).Encode(config)
+}
+
+func hasCommonElement(arr1, arr2 []int) bool {
+	if len(arr2) == 0 {
+		return true
+	}
+	elements := make(map[int]bool)
+
+	for _, num := range arr1 {
+		elements[num] = true
+	}
+
+	for _, num := range arr2 {
+		if elements[num] {
+			return true
+		}
+	}
+
+	return false
 }

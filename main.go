@@ -145,6 +145,7 @@ type Character struct {
 	Map      int      `json:"map"`
 	Position Position `json:"position"`
 	Type     string   `json:"type"`
+	Group    []int
 	updated  time.Time
 }
 
@@ -225,6 +226,8 @@ const (
 	AUTH_MAP     = "map"
 	AUTH_MARKERS = "markers"
 	AUTH_UPLOAD  = "upload"
+	AUTH_GROUP1  = "g1"
+	AUTH_GROUP2  = "g2"
 )
 
 type User struct {
