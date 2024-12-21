@@ -230,6 +230,9 @@ const (
 	AUTH_UPLOAD  = "upload"
 	AUTH_GROUP1  = "g1"
 	AUTH_GROUP2  = "g2"
+	AUTH_GROUP3  = "g3"
+	AUTH_GROUP4  = "g4"
+	AUTH_GROUP5  = "g5"
 )
 
 type User struct {

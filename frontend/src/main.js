@@ -44,7 +44,7 @@ if (process.env.NODE_ENV === 'development') {
                 }
             );
             this.get("config/", () => {
-                    return {"title": "map", "auths": ["map", "markers", "point", "g1", "g2", "upload", "writer", "admin"]}
+                    return {"title": "map", "auths": ["map", "markers", "point", "g1", "g2", "g3", "g4", "g5", "upload", "writer", "admin"]}
                 }
             );
         }

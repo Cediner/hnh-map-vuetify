@@ -145,6 +145,15 @@ func groupArr(a Auths) []int {
 	if a.Has(AUTH_GROUP2) {
 		groups = append(groups, 2)
 	}
+	if a.Has(AUTH_GROUP3) {
+		groups = append(groups, 3)
+	}
+	if a.Has(AUTH_GROUP4) {
+		groups = append(groups, 4)
+	}
+	if a.Has(AUTH_GROUP5) {
+		groups = append(groups, 5)
+	}
 
 	return groups
 }

@@ -59,6 +59,24 @@
                         </li>
                         <li class="collection-item">
                             <label>
+                                <input type="checkbox" name="auths" value="g3"{{if .User.Auths.Has "g3"}} checked="checked"{{end}}/>
+                                <span>Group 3</span>
+                            </label>
+                        </li>
+                        <li class="collection-item">
+                            <label>
+                                <input type="checkbox" name="auths" value="g4"{{if .User.Auths.Has "g4"}} checked="checked"{{end}}/>
+                                <span>Group 4</span>
+                            </label>
+                        </li>
+                        <li class="collection-item">
+                            <label>
+                                <input type="checkbox" name="auths" value="g5"{{if .User.Auths.Has "g5"}} checked="checked"{{end}}/>
+                                <span>Group 5</span>
+                            </label>
+                        </li>
+                        <li class="collection-item">
+                            <label>
                                 <input type="checkbox" name="auths" value="upload"{{if .User.Auths.Has "upload"}} checked="checked"{{end}}/>
                                 <span>Upload</span>
                             </label>
