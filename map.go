@@ -96,7 +96,7 @@ func (m *Map) getMaps(rw http.ResponseWriter, req *http.Request) {
 	maps := map[int]*MapInfo{}
 	m.db.View(func(tx *bbolt.Tx) error {
 		mapB := tx.Bucket([]byte("maps"))
-		if maps == nil {
+		if mapB == nil {
 			return nil
 		}
 		return mapB.ForEach(func(k, v []byte) error {
